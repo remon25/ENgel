@@ -3,7 +3,7 @@ import { Order } from "@/app/models/Order";
 import validator from "validator";
 import sanitizeHtml from "sanitize-html";
 import { DeliveryPrice } from "@/app/models/DeliverPrices";
-import { MenuItem } from "@/app/models/productItem";
+import { ProductItem } from "@/app/models/productItem";
 import paypal from "@paypal/checkout-server-sdk";
 
 const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
@@ -100,7 +100,7 @@ export async function POST(req) {
     }
 
     // Step 4: Calculate final total price and validate cart items
-    const menuItems = await MenuItem.find({
+    const menuItems = await ProductItem.find({
       _id: { $in: cartProducts.map((item) => item._id) },
     }).lean();
 

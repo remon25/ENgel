@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { Order } from "@/app/models/Order";
-import { MenuItem } from "@/app/models/productItem";
+import { ProductItem } from "@/app/models/productItem";
 import { DeliveryPrice } from "@/app/models/DeliverPrices";
 import validator from "validator";
 import sanitizeHtml from "sanitize-html";
@@ -120,7 +120,7 @@ export async function POST(req) {
     }
 
     // Fetch menu items for price validation
-    const menuItems = await MenuItem.find({
+    const menuItems = await ProductItem.find({
       _id: { $in: cartProducts.map((item) => item._id) },
     }).lean();
 

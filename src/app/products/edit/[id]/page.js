@@ -116,7 +116,7 @@ function EditProductPage() {
         <div className="md:max-w-[31rem] ml-auto">
           <DeleteButton
             label="Löschen"
-            onDelete={() => handleDelete(menuItem._id)}
+            onDelete={() => handleDelete(productItem._id)}
           />
         </div>
       </div>
