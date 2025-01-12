@@ -115,15 +115,17 @@ export default function Header() {
           <Image src="/logo.png" alt="ENGEL logo" width={70} height={70} />
         </Link>
         <div className="flex gap-8 items-center">
-          <Link href={"/profile"}>
-            <Image
-              src={userData?.image || "/avatar.svg"}
-              alt={userName}
-              className="rounded-[50%]"
-              width={40}
-              height={40}
-            />
-          </Link>
+          {!isAdmin && (
+            <Link href={"/profile"}>
+              <Image
+                src={userData?.image || "/avatar.svg"}
+                alt={userName}
+                className="rounded-[50%]"
+                width={40}
+                height={40}
+              />
+            </Link>
+          )}
           <button
             className="p-1 border"
             onClick={() => setMobileNavOpen((prev) => !prev)}
