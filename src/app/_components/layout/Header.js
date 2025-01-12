@@ -124,7 +124,6 @@ export default function Header() {
               height={40}
             />
           </Link>
-
           <button
             className="p-1 border"
             onClick={() => setMobileNavOpen((prev) => !prev)}
@@ -144,7 +143,8 @@ export default function Header() {
             )}
 
             <Cart className="w-6 h-6 fill-white cursor-pointer" />
-          </div>        </div>
+          </div>{" "}
+        </div>
       </div>
       {mobileNavOpen && (
         <div
@@ -154,7 +154,34 @@ export default function Header() {
           <Link href={"/"}>Startseite</Link>
           <Link href={"/"}>Alle Produkte</Link>
           <Link href={"tel:15216722182"}>Kontakt</Link>
-          <AuthLinks status={status} userName={userName} mobile={true} />
+          {isAdmin ? (
+            <>
+              <Link
+                href={"/dashboard"}
+                className="flex items-center justify-center gap-2 bg-white rounded-[5px] text-primary text-center px-4 py-2"
+              >
+                <Image
+                  width={20}
+                  height={20}
+                  alt="dashboard icon"
+                  src={"/dashboard.svg"}
+                />
+                Dashboard
+              </Link>
+              <button
+                onClick={() => signOut()}
+                className="bg-white rounded-[5px] text-primary px-4 py-2"
+              >
+                Abmelden
+              </button>
+            </>
+          ) : (
+            <AuthLinks
+              status={status}
+              userName={userName}
+              image={userData?.image}
+            />
+          )}{" "}
         </div>
       )}
       <div className="hidden md:flex items-center justify-between px-8 py-6">
