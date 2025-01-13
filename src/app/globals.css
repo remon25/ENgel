@@ -191,6 +191,9 @@ div.tabs .active {
   .admin_dashboard_side.show-side{
     left: 0%;
   }
+  .delivery-item{
+    flex-direction: column !important;
+  }
 }
 
 .swiper {

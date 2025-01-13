@@ -294,7 +294,7 @@ function DeliveryPage() {
         {deliveryPrices.map((price) => (
           <li
             key={price._id}
-            className="p-4 border rounded-md shadow-md flex justify-between items-center"
+            className="p-4 border rounded-md shadow-md flex gap-2 justify-between items-center delivery-item"
           >
             {editingPrice === price._id ? (
               <div className="flex flex-col items-center mr-1">
