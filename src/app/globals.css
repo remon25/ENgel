@@ -156,6 +156,9 @@ div.tabs .active {
   .admin_dashboard_side a {
     padding: 0;
   }
+  .admin_dashboard_side > div{
+    align-items: center;
+   }
 
   .admin_dashboard_side a {
     display: flex;
@@ -191,6 +194,7 @@ div.tabs .active {
   .admin_dashboard_side.show-side{
     left: 0%;
   }
+  
   .delivery-item{
     flex-direction: column !important;
   }
