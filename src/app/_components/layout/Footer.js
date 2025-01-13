@@ -29,17 +29,6 @@ export default function Footer() {
             </div>
             <div className="p-5 text-neutral-100">
               <div className="text-md uppercase text-white font-bold">
-                Unterstützung
-              </div>
-              <Link href={"/"} className="my-3 block">
-                AGB
-              </Link>
-              <Link href={"/"} className="my-3 block">
-                Datenschutzerklärung
-              </Link>
-            </div>
-            <div className="p-5 text-neutral-100">
-              <div className="text-md uppercase text-white font-bold">
                 Kontakt
               </div>
               <a className="my-3 block" href="/#">
@@ -49,13 +38,17 @@ export default function Footer() {
               <a className="text-nowrap block my-3" href="tel:15216722182">
                 15216722182
               </a>
-              <a
-                className="my-3 block"
-                href="mailto:angelwardparfumier@gmail.com"
-              >
-                angelwardparfumier@gmail.com
-                <span className="text-teal-600 text-xs p-1"></span>
-              </a>
+            </div>
+            <div className="p-5 text-neutral-100">
+              <div className="text-md uppercase text-white font-bold">
+                Unterstützung
+              </div>
+              <Link href={"/"} className="my-3 block">
+                AGB
+              </Link>
+              <Link href={"/"} className="my-3 block">
+                Datenschutzerklärung
+              </Link>
             </div>
           </div>
         </div>
@@ -74,6 +67,15 @@ export default function Footer() {
               </a>
               <a href="/#" className="w-6 mx-2">
                 <Whatsapp className="w-6 h-6" />
+              </a>
+            </div>
+            <div>
+              <a
+                className="my-3 block text-white text-[14px]"
+                href="mailto:angelwardparfumier@gmail.com"
+              >
+                angelwardparfumier@gmail.com
+                <span className="text-teal-600 text-xs p-1"></span>
               </a>
             </div>
             <div className="my-5 text-neutral-50">

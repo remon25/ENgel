@@ -72,8 +72,8 @@ function LoginPage() {
   return (
     <section className="mt-16 p-4">
       {loggingIn && (
-        <div className="fixed w-full h-full inset-0 flex justify-center items-center bg-black opacity-80">
-          <Spinner color="white" />
+        <div className="fixed w-full h-full inset-0 flex justify-center items-center bg-white opacity-80">
+          <Spinner />
         </div>
       )}
       <h1 className="text-center text-primary text-4xl font-bold mb-6">

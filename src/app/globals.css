@@ -141,12 +141,55 @@ div.tabs .active {
   .hero-section {
     top: -54px !important;
   }
+  .admin_dashboard {
+    display: flex;
+  }
+
+  .admin_dashboard_main {
+    width: 100%;
+    padding: 0.2rem;
+  }
+  .admin_dashboard_side {
+    width: 70px;
+  }
+  .admin_dashboard_side > div,
+  .admin_dashboard_side a {
+    padding: 0;
+  }
+
+  .admin_dashboard_side a {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    width: 45px;
+  }
+  .admin_dashboard_side span,
+  .admin_dashboard_side h2 {
+    display: none;
+  }
 }
 
 @media (max-width: 600px) {
   .menu-item-image .image-holder {
     width: 70px !important;
     height: 70px !important;
+  }
+}
+
+@media (max-width: 450px) {
+  .admin_dashboard_side {
+    position: absolute;
+    z-index: 11;
+    height: 100%;
+    left: -100%;
+    transition: all 0.3s ease;
+  }
+  .show-admin-side {
+    display: block;
+  }
+  .admin_dashboard_side.show-side{
+    left: 0%;
   }
 }
 

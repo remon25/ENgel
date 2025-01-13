@@ -80,7 +80,7 @@ function DashboardPage() {
   }
   if (isAdmin === null) return null;
   return (
-    <div className="grid grid-cols-1 gap-4 px-4 mt-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:px-8">
+    <div className="grid grid-cols-1 gap-4 px-4 mt-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 sm:px-8">
       <div className="flex items-center bg-white border rounded-sm overflow-hidden shadow">
         <div className="p-4 bg-green-400">
           <svg

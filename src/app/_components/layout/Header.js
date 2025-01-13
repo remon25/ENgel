@@ -200,11 +200,11 @@ export default function Header() {
             <>
               <Link
                 href={"/dashboard"}
-                className="flex items-center gap-2 bg-white rounded-[5px] text-primary px-4 py-2"
+                className="flex items-center text-[15px] gap-2 bg-white rounded-[5px] text-primary px-2 py-2"
               >
                 <Image
                   width={20}
-                  height={20}
+                  height={120}
                   alt="dashboard icon"
                   src={"/dashboard.svg"}
                 />
@@ -212,7 +212,7 @@ export default function Header() {
               </Link>
               <button
                 onClick={() => signOut()}
-                className="bg-white rounded-[5px] text-primary px-4 py-2"
+                className="bg-white rounded-[5px] text-primary text-[15px] px-4 py-2"
               >
                 Abmelden
               </button>
