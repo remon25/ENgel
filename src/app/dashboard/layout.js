@@ -17,10 +17,10 @@ function Layout({ children }) {
       >
         <Image src={"/menu-bar.svg"} alt="menu-bar" width={30} height={30} />
       </div>
-      <div className="w-[95dvw] min-h-dvh bg-gray-200 grid grid-cols-8 admin_dashboard">
+      <div className="w-[95dvw] min-h-dvh bg-gray-200 grid grid-cols-7 admin_dashboard">
         {/* SideBar */}
         <div
-          className={`col-span-2 bg-white admin_dashboard_side ${
+          className={`col-span-1 bg-white admin_dashboard_side ${
             showAdminSide ? "show-side" : "hide-side"
           }`}
         >
