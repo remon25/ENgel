@@ -11,6 +11,7 @@ export default function ProductPage() {
   const [mainImage, setMainImage] = useState(null);
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState(null);
 
   const { id } = useParams();
 
@@ -27,6 +28,7 @@ export default function ProductPage() {
         const data = await response.json();
         setProduct(data);
         setMainImage(data.bannerImage); // Set the main image initially
+        setSelectedSize(data.sizes?.[0] || null); // Set the first size as default
       } catch (error) {
         console.error("Error fetching product:", error);
       }
@@ -36,7 +38,7 @@ export default function ProductPage() {
   }, [id]);
 
   const handleAddToCart = () => {
-    addToCart(product, null, [], quantity); // You can pass size and extras as needed
+    addToCart(product, selectedSize, [], quantity); // You can pass size and extras as needed
   };
 
   if (!product) {
@@ -99,10 +101,10 @@ export default function ProductPage() {
             <h2 className="text-3xl font-bold mb-2">{name}</h2>
             <p className="text-gray-600 mb-4">ID: {product._id}</p>
             <div className="mb-4">
-              <span className="text-2xl font-bold mr-2">${product.price}</span>
+              <span className="text-2xl font-bold mr-2">{product.price}€</span>
               {product.price && (
                 <span className="text-gray-500 line-through">
-                  ${product.price * 1.2}
+                  {product.price * 1.2}€
                 </span>
               )}
             </div>
@@ -117,15 +119,28 @@ export default function ProductPage() {
               {sizes && (
                 <>
                   <h3 className="text-lg font-semibold mb-2">Sizes:</h3>
-                  <div className="flex items-center mb-2 gap-3">
-                    {sizes.map((size) => (
-                      <p
-                        key={size._id}
-                        className="border border-gray-500 px-2 cursor-pointer"
-                      >
-                        {size.name}
-                      </p>
-                    ))}
+                  <div className="flex flex-wrap items-center mb-2 gap-3">
+                    {sizes
+                      .sort((a, b) => {
+                        // Extract numbers from the size name (e.g., "100ml" -> 100)
+                        const numA = parseFloat(a.name.replace(/[^\d.]/g, ""));
+                        const numB = parseFloat(b.name.replace(/[^\d.]/g, ""));
+                        return numA - numB;
+                      })
+                      .map((size) => (
+                        <button
+                          key={size._id}
+                          onClick={() => setSelectedSize(size)}
+                          className={`border px-3 py-1 cursor-pointer ${
+                            selectedSize?._id === size._id
+                              ? "bg-blue-500 text-white"
+                              : "bg-white text-gray-600"
+                          }`}
+                        >
+                          <span className="font-medium uppercase">{size.name}{" "}</span>
+                          {size.price > 0 ? "(+" + size.price + "€" + ")" : ""}
+                        </button>
+                      ))}
                   </div>
                 </>
               )}

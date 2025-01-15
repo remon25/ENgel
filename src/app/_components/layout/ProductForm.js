@@ -211,12 +211,12 @@ export default function ProductForm({
             props={sizes}
             setProps={setSizes}
           />
-          <ProductItemPriceProps
+          {/* <ProductItemPriceProps
             addLabel={"Zusätzliche Zutat hinzufügen"}
             name={"Zusätzliche Zutat"}
             props={extraIngredientPrice}
             setProps={setExtraIngredientPrice}
-          />
+          /> */}
 
           <button className="rounded-xl p-2" type="submit">
             Save

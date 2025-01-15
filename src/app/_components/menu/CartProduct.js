@@ -7,13 +7,18 @@ export default function CartProduct({
   onRemove,
   index,
   disabled = false,
+  quantity = 1,
 }) {
   return (
     <div
       className={`grid grid-cols-2 place-items-center md:flex md:items-center gap-2 border-b py-4 ${
         disabled ? "cursor-not-allowed pointer-events-none" : ""
       }`}
+
     >
+      {quantity > 1 && (
+        <div className="flex items-center font-semibold">{quantity} x</div>
+      )}
       <div className="w-16">
         <Image
           width={240}

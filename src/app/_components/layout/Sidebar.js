@@ -150,6 +150,7 @@ export default function Sidebar() {
                   product={product}
                   onRemove={removeCartProduct}
                   index={index}
+                  quantity={product.quantity}
                 />
               ))}
             <div className="flex flex-col items-start">
