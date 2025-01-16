@@ -7,6 +7,11 @@ const ExtraOptionSchema = new Schema({
 
 const ProductSchema = new Schema(
   {
+    code: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     bannerImage: {
       type: String,
     },
@@ -50,4 +55,5 @@ function arrayLimit(val) {
   return val.length <= 7;
 }
 
-export const ProductItem = models?.ProductItem || model("ProductItem", ProductSchema);
+export const ProductItem =
+  models?.ProductItem || model("ProductItem", ProductSchema);

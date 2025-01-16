@@ -1,11 +1,11 @@
 "use client";
 import { useState } from "react";
 import Dialog from "../Dialog";
-import Time from "../icons/Time";
 import ChevronRight from "../icons/ChevronRight";
 import Cash from "../icons/Cash";
 import Paypal from "../icons/Paypal";
 import Credit from "../icons/Credit";
+import Address from "@/app/_components/Address";
 
 export default function AddressInputs({
   addressProps,
@@ -20,9 +20,6 @@ export default function AddressInputs({
   const {
     phone,
     streetAdress,
-    postalCode,
-    buildNumber,
-    deliveryTime,
     name,
     email,
     city,
@@ -38,7 +35,7 @@ export default function AddressInputs({
         aria-hidden="true"
       >
         <div
-          className="relative left-1/2 -z-10 aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-40rem)] sm:w-[72.1875rem]"
+          className="relative left-1/2 -z-10 aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#d4af5e] to-[#fff] opacity-30 sm:left-[calc(50%-40rem)] sm:w-[72.1875rem]"
           style={{
             clipPath:
               "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
@@ -79,25 +76,9 @@ export default function AddressInputs({
             value={streetAdress || ""}
             onChange={(ev) => setAddressProp("streetAdress", ev.target.value)}
           />
-          <label>Hausnummer</label>
-          <input
-            disabled={disabled}
-            type="number"
-            placeholder="Hausnummer"
-            value={buildNumber || ""}
-            onChange={(ev) => setAddressProp("buildNumber", ev.target.value)}
-          />
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label>Postleitzahl</label>
-              <input
-                disabled={disabled}
-                type="text"
-                placeholder="Postleitzahl"
-                value={postalCode || ""}
-                onChange={(ev) => setAddressProp("postalCode", ev.target.value)}
-              />
-            </div>
+          <Address/>
+          
+          <div className="grid grid-cols-1 gap-2">
             <div>
               <label>Stadt</label>
               {orderPage ? (
@@ -118,7 +99,10 @@ export default function AddressInputs({
                       cityInfo.find((c) => c.name === ev.target.value)
                         ?.postalCode
                     );
-                  }}
+                  }
+                
+                
+                }
                 >
                   <option value={""}>Wählen Sie eine Stadt</option>
                   {cities.map((city) => (
@@ -127,94 +111,29 @@ export default function AddressInputs({
                     </option>
                   ))}
                 </select>
-              )}
+              )
+              
+              
+              }
             </div>
           </div>
         </>
       )}
 
       <div className={`${orderType === "delivery" ? "-mt-4" : "mt-0"} w-full`}>
-        {/* {!orderPage && (
-          <button
-            disabled={disabled}
-            type="button"
-            className={`button flex justify-between items-center my-4 ${disabled ? "cursor-not-allowed" : ""}`}
-            onClick={() => setShowPopup(true)}
-          >
-            <div className="flex items-center gap-4">
-              <Time />
-              <div>
-                <h3 className="text-sm sm:text-xl text-left text-gray-900 font-semibold">
-                  {orderType === "delivery" ? "Lieferzeit" : "Abholzeit"}
-                </h3>
-                <div className="text-left"> {deliveryTime}</div>
-              </div>
-            </div>
-            <ChevronRight />
-          </button>
-        )} */}
-        {/* {showPopup && (
-          <Dialog setShowPopup={setShowPopup}>
-            <label
-              htmlFor="deliveryTime"
-              className="text-2xl text-gray-950 font-semibold block mt-4 mb-4"
-            >
-              Lieferzeit
-            </label>
-            {!orderPage && (
-              <select
-                id="deliveryTime"
-                value={deliveryTime}
-                onChange={(e) => setAddressProp("deliveryTime", e.target.value)}
-                className="block w-full mt-2 p-2 border"
-              >
-                {timeOptions.map((time, index) => (
-                  <option key={index} value={time}>
-                    {time === "ASAP" ? "So schnell wie möglich" : time}
-                  </option>
-                ))}
-              </select>
-            )}
-          </Dialog>
-        )} */}
         {orderPage && (
           <>
-            {/* <button
-              type="button"
-              disabled
-              className="button flex justify-between items-center my-4"
-            >
-              <div className="flex items-center gap-4">
-                <Time />
-                <div>
-                  <h3 className="text-xl text-left text-gray-900 font-semibold">
-                    {orderType === "delivery" ? "Lieferzeit" : "Abholzeit"}
-                  </h3>
-                  <div className="text-left"> {deliveryTime}</div>
-                </div>
-              </div>
-            </button> */}
             <button
               type="button"
               disabled
               className="button flex justify-between items-center my-4 !py-5"
             >
               <div className="flex items-center gap-4">
-                {paymentMethod === "cash" ? (
-                  <Cash />
-                ) : paymentMethod === "paypal" ? (
-                  <Paypal />
-                ) : (
-                  <Credit />
-                )}
+                {paymentMethod === "paypal" ? <Paypal /> : <Credit />}
                 <div>
                   <p className="text-xs">Ausgewählte Zahlungsmethode</p>
                   <h3 className="text-xl text-left text-gray-900 font-semibold">
-                    {paymentMethod === "cash"
-                      ? "Bargeld"
-                      : paymentMethod === "paypal"
-                      ? "PayPal"
-                      : "Kreditkarte"}
+                    {paymentMethod === "paypal" ? "PayPal" : "Kreditkarte"}
                   </h3>
                 </div>
               </div>

@@ -150,9 +150,7 @@ export default function FilteredMenu({ menu, categories }) {
 
   return (
     <section className="home-menu">
-      <h1 className="text-[#222] text-left font-bold text-2xl md:text-2xl mb-2 mt-14 p-5 max-w-6xl mx-auto">
-        Ausgewählte Produkte
-      </h1>
+      
 
       {/* Sticky SearchBar */}
       <div className="sticky top-0 z-[11] bg-white max-w-6xl mx-auto">

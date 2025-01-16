@@ -47,13 +47,10 @@ export async function POST(req) {
       phone: sanitizeHtml(address.phone),
       city: sanitizeHtml(address.city),
       streetAdress: sanitizeHtml(address.streetAdress),
-      buildNumber: sanitizeHtml(address.buildNumber),
-      postalCode: sanitizeHtml(address.postalCode),
-      deliveryTime: sanitizeHtml(address.deliveryTime),
     };
 
     // Validate and sanitize orderType
-    if (!["delivery", "pickup"].includes(orderType)) {
+    if (!["delivery"].includes(orderType)) {
       console.error("Invalid order type:", orderType);
       return new Response("Invalid order type", { status: 400 });
     }
@@ -73,13 +70,6 @@ export async function POST(req) {
         name: sanitizedAddress.city,
       }).lean();
 
-      if (!cityDeliveryInfo) {
-        console.error(
-          "City not supported for delivery:",
-          sanitizedAddress.city
-        );
-        return new Response("City not supported for delivery", { status: 400 });
-      }
 
       if (cityDeliveryInfo.isFreeDelivery && deliveryPrice > 0) {
         console.error("Delivery should be free for this city:", deliveryPrice);
@@ -195,7 +185,7 @@ export async function POST(req) {
 
       sanitizedCartProducts.push({
         _id: product._id,
-        image: sanitizeHtml(product.image),
+        bannerImage: sanitizeHtml(product.bannerImage),
         name: sanitizeHtml(product.name),
         description: sanitizeHtml(product.description),
         category: product.category,
@@ -226,9 +216,6 @@ export async function POST(req) {
       phone: sanitizedAddress.phone,
       city: sanitizedAddress.city,
       streetAdress: sanitizedAddress.streetAdress,
-      buildNumber: sanitizedAddress.buildNumber,
-      postalCode: sanitizedAddress.postalCode,
-      deliveryTime: sanitizedAddress.deliveryTime,
       cartProducts: sanitizedCartProducts,
       payOnDelivery: false,
       subtotal,
@@ -240,6 +227,7 @@ export async function POST(req) {
     });
 
     const stripeLineItems = [];
+    
     for (const product of cartProducts) {
       let productTotal = product.price;
 
@@ -293,17 +281,14 @@ export async function POST(req) {
     const stripeSession = await stripe.checkout.sessions.create({
       line_items: stripeLineItems,
       mode: "payment",
+      payment_method_types: ["card", "klarna"], // Include Klarna
       customer_email: sanitizedAddress.email,
-      success_url:
-        process.env.NEXTAUTH_URL +
-        "orders/" +
-        orderDoc._id.toString() +
-        "?clear-cart=1",
+      success_url: process.env.NEXTAUTH_URL + "orders/" + orderDoc._id.toString() + "?clear-cart=1",
       cancel_url: process.env.NEXTAUTH_URL + "cart?canceled=1",
       metadata: { orderId: orderDoc._id.toString() },
       payment_intent_data: { metadata: { orderId: orderDoc._id.toString() } },
     });
-
+    
     return Response.json(stripeSession.url);
   } catch (error) {
     console.error("Error occurred:", error);

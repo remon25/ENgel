@@ -150,7 +150,7 @@ export async function POST(req) {
 
       sanitizedCartProducts.push({
         _id: product._id,
-        image: sanitizeHtml(product.image),
+        bannerImage: sanitizeHtml(product.bannerImage),
         name: sanitizeHtml(product.name),
         description: sanitizeHtml(product.description),
         price: parseFloat(product.price),

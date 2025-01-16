@@ -154,7 +154,7 @@ export default function Header() {
           className="md:hidden top-0 p-4 bg-gray-950 text-white rounded-lg mt-2 flex flex-col gap-2 text-center"
         >
           <Link href={"/"}>Startseite</Link>
-          <Link href={"/"}>Alle Produkte</Link>
+          <Link href={"/products/all"}>Alle Produkte</Link>
           <Link href={"tel:15216722182"}>Kontakt</Link>
           {isAdmin ? (
             <>
@@ -192,7 +192,7 @@ export default function Header() {
             <Image src="/logo.png" alt="ENGEL logo" width={70} height={70} />
           </Link>
           <Link href={"/"}>Startseite</Link>
-          <Link href={"/"}>Alle Produkte</Link>
+          <Link href={"/products/all"}>Alle Produkte</Link>
           <Link href={"tel:15216722182"}>Kontakt</Link>
         </nav>
         <nav className="flex items-center gap-4 text-white font-semibold">

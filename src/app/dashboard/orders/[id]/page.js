@@ -104,7 +104,7 @@ function OrderPage() {
     );
   }
 
-
+  
   // Render order details if order is found
   return (
     <section className="max-w-4xl mx-auto mt-4 p-4">
@@ -150,29 +150,6 @@ function OrderPage() {
           </div>
           <div>
             <div className="bg-gray-100 p-4 rounded-lg">
-              {order.orderType === "delivery" ? (
-                <div className="flex justify-center items-center gap-2 bg-white rounded-full py-2 px-4 shadow-lg mb-2">
-                  <Delivery
-                    className={`${
-                      order?.orderType == "delivery"
-                        ? "w-6 h-6 stroke-primary"
-                        : "w-6 h-6 stroke-black"
-                    } transition-all duration-300 ease-in-out`}
-                  />
-                  <div className={`font-semibold`}>Lieferung</div>
-                </div>
-              ) : (
-                <div className="flex justify-center items-center gap-2 bg-white rounded-full py-2 px-4 shadow-lg mb-2">
-                  <Pickup
-                    className={`${
-                      order?.orderType == "pickup"
-                        ? "w-6 h-6 fill-primary"
-                        : "w-6 h-6 fill-black"
-                    } transition-all duration-300 ease-in-out`}
-                  />
-                  <div className={`font-semibold`}>Abholung</div>
-                </div>
-              )}
               <AddressInputs
                 disabled={true}
                 addressProps={order}

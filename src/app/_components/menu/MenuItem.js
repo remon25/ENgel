@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { cartContext } from "../AppContext";
 import toast from "react-hot-toast";
 import Image from "next/image";
@@ -20,6 +20,7 @@ export default function MenuItem({ menuItemInfo, isOffersCategory }) {
   const [selectedExtras, setSelectedExtras] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const { addToCart } = useContext(cartContext);
+  const [category, setCategory] = useState(null);
 
   function handlePopupToggle() {
     if (!showPopup) {
@@ -58,6 +59,25 @@ export default function MenuItem({ menuItemInfo, isOffersCategory }) {
     }
   }
 
+  useEffect(() => {
+    async function fetchProduct() {
+      // Fetch category based on category ID from product
+      try {
+        const categoryResponse = await fetch(`/api/categories`);
+        if (categoryResponse.ok) {
+          const categoryData = await categoryResponse.json();
+
+          setCategory(
+            categoryData.find((cat) => cat._id === menuItemInfo.category).name
+          );
+        }
+      } catch (error) {
+        console.error("Fehler beim Laden des Produkts:", error);
+      }
+    }
+    fetchProduct();
+  }, [menuItemInfo.category]);
+
   let selectedPrice = price;
 
   if (selectedSize) {
@@ -77,19 +97,21 @@ export default function MenuItem({ menuItemInfo, isOffersCategory }) {
             <Image
               width={250}
               height={250}
-              src={bannerImage}
+              src={bannerImage || "/default-menu.png"}
               alt="Product"
               className="h-60 w-60 object-cover rounded-t-xl"
             />
           </div>
           <div className="px-4 py-3 w-60">
-            <span className="text-gray-400 mr-3 uppercase text-xs">Brand</span>
+            <span className="text-gray-400 mr-3 uppercase text-xs">
+              {category || ""}
+            </span>
             <p className="text-lg font-bold text-black truncate block capitalize">
               {name}
             </p>
             <div className="flex items-center">
               <p className="text-lg font-semibold text-black cursor-auto my-3">
-                {price} €
+               <span className="text-gray-500 mr-3 uppercase text-xs">ab</span> {price} €
               </p>
               <del>
                 <p className="text-sm text-gray-600 cursor-auto ml-2">

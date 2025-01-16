@@ -99,7 +99,7 @@ function OrdersPage() {
                 </div>
               </div>
               <div className="justify-end flex gap-2 items-center whitespace-nowrap">
-                <Link href={"/dasboar/orders/" + order._id} className="button">
+                <Link href={"/dashboard/orders/" + order._id} className="button">
                   Anzeigen
                 </Link>
               </div>

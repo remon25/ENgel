@@ -15,7 +15,7 @@ export default function Sidebar() {
   const { cartProducts, removeCartProduct, orderType, showSidebarContext } =
     useContext(cartContext);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(false);
   const [loading, setLoading] = useState(true);
   const [deliveryPrices, setDeliveryPrices] = useState([]);
   const [myDeliveryPrice, setMyDeliveryPrice] = useState(undefined);
@@ -37,15 +37,16 @@ export default function Sidebar() {
   }
 
   useEffect(() => {
-    if (
-      pathname !== "/" &&
-      pathname !== "/menu" &&
-      !pathname.startsWith("/products")
-    ) {
-      setShowSidebar(false);
-    } else {
-      setShowSidebar(true);
-    }
+    // if (
+    //   pathname !== "/" &&
+    //   pathname !== "/menu" &&
+    //   !pathname.startsWith("/products")
+    // ) {
+    //   setShowSidebar(false);
+    // } else {
+    //   setShowSidebar(true);
+    // }
+    setShowSidebar(true);
     if (!showSidebarContext) setShowSidebar(false);
   }, [pathname, showSidebarContext]);
 

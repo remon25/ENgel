@@ -6,10 +6,12 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import Spinner from "@/app/_components/layout/Spinner";
 import { cartContext } from "@/app/_components/AppContext";
+import Link from "next/link";
 
 export default function ProductPage() {
   const [mainImage, setMainImage] = useState(null);
   const [product, setProduct] = useState(null);
+  const [category, setCategory] = useState(null); // State to store category data
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState(null);
 
@@ -23,25 +25,36 @@ export default function ProductPage() {
     async function fetchProduct() {
       try {
         const response = await fetch(`/api/products?_id=${id}`);
-        if (!response.ok) throw new Error("Failed to fetch product");
+        if (!response.ok)
+          throw new Error("Produkt konnte nicht geladen werden");
 
         const data = await response.json();
         setProduct(data);
         setMainImage(data.bannerImage); // Set the main image initially
         setSelectedSize(data.sizes?.[0] || null); // Set the first size as default
+
+        // Fetch category based on category ID from product
+        const categoryResponse = await fetch(`/api/categories`);
+        if (categoryResponse.ok) {
+          const categoryData = await categoryResponse.json();
+
+          setCategory(categoryData.find((cat) => cat._id === data.category));
+        }
       } catch (error) {
-        console.error("Error fetching product:", error);
+        console.error("Fehler beim Laden des Produkts:", error);
       }
     }
 
     fetchProduct();
   }, [id]);
 
+  console.log(category);
+
   const handleAddToCart = () => {
     addToCart(product, selectedSize, [], quantity); // You can pass size and extras as needed
   };
 
-  if (!product) {
+  if (!product || !category) {
     return (
       <div className="w-full h-screen flex items-center justify-center overflow-hidden">
         <Spinner />
@@ -58,6 +71,7 @@ export default function ProductPage() {
     sizes,
     stock,
     extraOptions,
+    code,
   } = product;
 
   const increaseQuantity = () => setQuantity(quantity + 1);
@@ -77,7 +91,7 @@ export default function ProductPage() {
               placeholder="blur"
               blurDataURL={"./default-menu.png"}
               quality={80}
-              src={mainImage || bannerImage}
+              src={mainImage || bannerImage || "/default-menu.png"}
               alt={name}
               className="w-full h-auto rounded-lg shadow-md mb-4"
             />
@@ -87,8 +101,8 @@ export default function ProductPage() {
                   key={index}
                   width={50}
                   height={50}
-                  src={img}
-                  alt={`Thumbnail ${index + 1}`}
+                  src={img || "/default-menu.png"}
+                  alt={`Miniaturbild ${index + 1}`}
                   className="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
                   onClick={() => changeImage(img)}
                 />
@@ -99,7 +113,11 @@ export default function ProductPage() {
           {/* Product Details */}
           <div className="w-full md:w-1/2 px-4">
             <h2 className="text-3xl font-bold mb-2">{name}</h2>
-            <p className="text-gray-600 mb-4">ID: {product._id}</p>
+            <p className="text-gray-600 mb-4">Seite: {product?.code}</p>
+            <p className="text-gray-600 mb-4">
+              Kategorie: {category.name}
+            </p>{" "}
+            {/* Display category name */}
             <div className="mb-4">
               <span className="text-2xl font-bold mr-2">{product.price}€</span>
               {product.price && (
@@ -108,25 +126,26 @@ export default function ProductPage() {
                 </span>
               )}
             </div>
-            <div className="border-b border-gray-300 py-4 mb-4">
-              <h3 className="text-lg font-semibold mb-2">
-                Product Description
-              </h3>
-              <p className="text-gray-700 mb-6">{description}</p>
-            </div>
-
+            {description && (
+              <div className="border-b border-gray-300 py-4 mb-4">
+                <h3 className="text-lg font-semibold mb-2">
+                  Produktbeschreibung
+                </h3>
+                <p className="text-gray-700 mb-6">{description}</p>
+              </div>
+            )}
             <div className="border-b border-gray-300 py-4 mb-4">
               {sizes && (
                 <>
-                  <h3 className="text-lg font-semibold mb-2">Sizes:</h3>
+                  <h3 className="text-lg font-semibold mb-2">Größen:</h3>
                   <div className="flex flex-wrap items-center mb-2 gap-3">
                     {sizes
-                      .sort((a, b) => {
-                        // Extract numbers from the size name (e.g., "100ml" -> 100)
-                        const numA = parseFloat(a.name.replace(/[^\d.]/g, ""));
-                        const numB = parseFloat(b.name.replace(/[^\d.]/g, ""));
-                        return numA - numB;
-                      })
+                      // .sort((a, b) => {
+                      //   // Extract numbers from the size name (e.g., "100ml" -> 100)
+                      //   const numA = parseFloat(a.name.replace(/[^\d.]/g, ""));
+                      //   const numB = parseFloat(b.name.replace(/[^\d.]/g, ""));
+                      //   return numA - numB;
+                      // })
                       .map((size) => (
                         <button
                           key={size._id}
@@ -137,7 +156,9 @@ export default function ProductPage() {
                               : "bg-white text-gray-600"
                           }`}
                         >
-                          <span className="font-medium uppercase">{size.name}{" "}</span>
+                          <span className="font-medium uppercase">
+                            {size.name}{" "}
+                          </span>
                           {size.price > 0 ? "(+" + size.price + "€" + ")" : ""}
                         </button>
                       ))}
@@ -164,18 +185,17 @@ export default function ProductPage() {
                 +
               </button>
             </div>
-
             <div className="flex space-x-4 mb-6">
               <button
                 onClick={handleAddToCart}
                 className="bg-[#d4af5e] flex gap-2 items-center text-white px-6 py-2 hover:bg-[#d4af50] focus:outline-none"
               >
                 <Cart />
-                Add to Cart
+                In den Warenkorb
               </button>
-              <button className="flex gap-2 items-center border border-[#121212] px-6 py-2 hover:bg-[#d4af50] hover:border-[#d4af50] hover:text-white focus:outline-none">
-                Check out
-              </button>
+              <Link href="/cart" className="flex gap-2 items-center border border-[#121212] px-6 py-2 hover:bg-[#d4af50] hover:border-[#d4af50] hover:text-white focus:outline-none">
+                Zur Kasse
+              </Link>
             </div>
           </div>
         </div>

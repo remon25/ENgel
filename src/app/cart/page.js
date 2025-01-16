@@ -14,7 +14,6 @@ import {
   FUNDING,
 } from "@paypal/react-paypal-js";
 import Paypal from "../_components/icons/Paypal";
-import Cash from "../_components/icons/Cash";
 import Credit from "../_components/icons/Credit";
 import Check from "../_components/icons/Check";
 import Cart from "../_components/icons/Cart";
@@ -57,7 +56,7 @@ export default function CartPage() {
   const [timeOptions, setTimeOptions] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("credit");
-  const [reachMinimumOreder, setReachMinimumOreder] = useState(false);
+  const [reachMinimumOreder, setReachMinimumOreder] = useState(true);
   const [loading, setLoading] = useState(true);
   const [cityInfo, setCityInfo] = useState([]);
   const { session } = useSession();
@@ -120,22 +119,21 @@ export default function CartPage() {
 
   useEffect(() => {
     if (profileData) {
-      const { phone, streetAdress, city, postalCode, name, email } =
+      const { phone, streetAdress, city, name, email } =
         profileData;
       const addressFromProfile = {
         phone,
         streetAdress,
         city,
-        postalCode,
         email,
         name,
       };
-      setAddress({ ...addressFromProfile, buildNumber, deliveryTime });
+      setAddress({ ...addressFromProfile, deliveryTime });
     }
   }, [profileData, buildNumber, deliveryTime]);
 
   useEffect(() => {
-    setTimeOptions(["ASAP", ...generateTimeSlots()]); // Populate with "ASAP" + 15-minute slots
+    setTimeOptions(["ASAP", ...generateTimeSlots()]);
   }, []);
 
   function handleAddressChange(propName, value) {
@@ -147,9 +145,7 @@ export default function CartPage() {
     "email",
     "phone",
     "streetAdress",
-    "postalCode",
     "city",
-    "buildNumber",
   ];
 
   const pickupRequiredFields = ["name", "email", "phone"];
@@ -199,37 +195,6 @@ export default function CartPage() {
     });
   }
 
-  const handlePayOnDelivery = async () => {
-    const promise = new Promise((resolve, reject) => {
-      setDisabled(true);
-      fetch("/api/delivery", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          cartProducts,
-          address,
-          subtotal: totalPrice,
-          deliveryPrice: deliveryPrices[address.city],
-          orderType,
-        }),
-      }).then(async (response) => {
-        if (response.ok) {
-          resolve();
-          window.location = await response.json();
-        } else {
-          reject();
-          setDisabled(false);
-        }
-      });
-    });
-    await toast.promise(promise, {
-      loading: "Bestellung wird erstellt...",
-      success: "Bestellung erfolgreich erstellt",
-      error: "Etwas ist schiefgelaufen! Bitte versuche es erneut.",
-    });
-  };
 
   useEffect(() => {
     const cityData = cityInfo.find((c) => c.name === address?.city);
@@ -269,14 +234,6 @@ export default function CartPage() {
       <div className="text-center">
         <h2 className="text-gray-950 font-bold text-4xl">Kasse</h2>
       </div>
-      {orderType === "pickup" && (
-        <div className="flex justify-center text-center gap-1 mt-4">
-          <p className="font-semibold">
-            Filiale: Friedrich-Huth-Strasse 15 - 21698 Harsefeld
-          </p>
-        </div>
-      )}
-
       <div className="grid md:grid-cols-1 gap-4 mt-8">
         <div className="bg-gray-100 p-4 rounded-lg">
           <form onSubmit={proceedToCheckout}>
@@ -302,7 +259,6 @@ export default function CartPage() {
               >
                 <div className="flex items-center gap-4">
                   {selectedPaymentMethod === "paypal" && <Paypal />}
-                  {selectedPaymentMethod === "cash" && <Cash />}
                   {selectedPaymentMethod === "credit" && <Credit />}
                   <div>
                     <h3 className="text-sm sm:text-xl text-left text-gray-900 font-semibold">
@@ -317,23 +273,6 @@ export default function CartPage() {
                 <>
                   <Dialog setShowPopup={setShowPopup}>
                     <h3>Zahlungsmethoden</h3>
-                    <button
-                      type="button"
-                      className="button flex justify-between items-center my-4 !py-5"
-                      onClick={() => setSelectedPaymentMethod("cash")}
-                    >
-                      <div className="flex items-center gap-4">
-                        <Cash />
-                        <div>
-                          <h3 className="text-xl text-left text-gray-900 font-semibold">
-                            Barzahlung
-                          </h3>
-                          <div className="text-left"></div>
-                        </div>
-                      </div>
-                      {selectedPaymentMethod === "cash" && <Check />}
-                    </button>
-
                     <button
                       type="button"
                       className="button flex justify-between items-center my-4 !py-5"
@@ -501,110 +440,6 @@ export default function CartPage() {
                       </span>
                     )}
                   </p>
-                )}
-              </div>
-            )}
-            {orderType === "pickup" && (
-              <div>
-                {selectedPaymentMethod === "credit" ? (
-                  <button
-                    disabled={!isComplete || disabled}
-                    className="button"
-                    type="submit"
-                  >
-                    Bestellen & Bezahlen {totalPrice + " €"}
-                  </button>
-                ) : selectedPaymentMethod === "paypal" ? (
-                  <div className="relatie z-1 mt-4">
-                    {!loadingDeliveryPrices && (
-                      <div className="relative">
-                        <button
-                          disabled={!isComplete || disabled}
-                          type="button"
-                          className="button Dialog_button"
-                        >
-                          Bestellen & Bezahlen {totalPrice + " €"}
-                        </button>
-                        <div className="absolute top-0 right-0 left-0 bottom-0 opacity-0">
-                          {isComplete && (
-                            <PayPalScriptProvider
-                              options={{
-                                "client-id":
-                                  process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
-                                currency: "EUR",
-                              }}
-                            >
-                              <PayPalButtons
-                                forceReRender={[finalTotalPrice, address]}
-                                disabled={
-                                  !isComplete ||
-                                  loadingDeliveryPrices ||
-                                  !finalTotalPrice ||
-                                  disabled
-                                }
-                                fundingSource={FUNDING.PAYPAL}
-                                style={{ layout: "vertical", color: "blue" }}
-                                createOrder={async () => {
-                                  const res = await fetch("api/paypal", {
-                                    method: "POST",
-                                    body: JSON.stringify({
-                                      cartProducts,
-                                      address,
-                                      subtotal: totalPrice,
-                                      deliveryPrice:
-                                      deliveryPrices[address.city],
-                                      orderType,
-                                    }),
-                                  });
-                                  const order = await res.json();
-                                  return order.paypalOrderId;
-                                }}
-                                onApprove={async (data) => {
-                                  try {
-                                    const res = await fetch("/api/capture", {
-                                      method: "POST",
-                                      body: JSON.stringify({
-                                        paypalOrderId: data.orderID,
-                                      }),
-                                    });
-                                    const result = await res.json();
-
-                                    if (res.ok) {
-                                      toast.success("Zahlung erfolgreich");
-                                      window.location.href = result.successUrl;
-                                    } else {
-                                      throw new Error(
-                                        result.message ||
-                                          "Error capturing order"
-                                      );
-                                    }
-                                  } catch (error) {
-                                    toast.error("Error capturing payment");
-                                    console.error(error);
-                                  }
-                                }}
-                                onCancel={(data) => {}}
-                                onError={() =>
-                                  toast.error("PayPal-Zahlung fehlgeschlagen")
-                                }
-                              />
-                            </PayPalScriptProvider>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="mt-4">
-                    <button
-                      disabled={!isComplete || disabled}
-                      onClick={handlePayOnDelivery}
-                      type="button"
-                      className="button Dialog_button"
-                    >
-                      Bestellen & Bezahlen {totalPrice + " €"}
-                    </button>
-                  </div>
                 )}
               </div>
             )}

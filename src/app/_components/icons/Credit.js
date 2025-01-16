@@ -5,7 +5,7 @@ export default function Credit({ className = "w-6 h-6" }) {
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
-      stroke="#A9111E"
+      stroke="#212121"
       className={className}
     >
       <path

@@ -1,7 +1,6 @@
-import FilteredMenu from "./FilteredMenu";
+import FilteredMenu from "@/app/_components/layout/FilteredMenu";
 
 export default async function Page() {
-  // Fetch data server-side
   let menu = [];
   let categories = [];
 
@@ -24,7 +23,7 @@ export default async function Page() {
   return (
     <>
       <h1 className="text-[#222] text-left font-bold text-2xl md:text-2xl mb-2 mt-14 p-5 max-w-6xl mx-auto">
-        Ausgewählte Produkte
+        Alle Produkte
       </h1>
       <FilteredMenu menu={menu} categories={categories} />;
     </>

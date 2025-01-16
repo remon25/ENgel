@@ -5,29 +5,26 @@ const OrderSchema = new Schema(
     name: String,
     email: String,
     phone: String,
-    city: String,
     streetAdress: String,
-    buildNumber: String,
-    postalCode: String,
+    city: String,
     cartProducts: Object,
     paid: { type: Boolean, default: false },
-    payOnDelivery: { type: Boolean, default: false },
     deliveryTime: String,
     subtotal: Number,
     deliveryPrice: Number,
     finalTotalPrice: Number,
     paymentMethod: {
       type: String,
-      enum: ["paypal", "credit card", "cash"],
+      enum: ["paypal", "credit card"],
       required: true,
     },
     orderType: {
       type: String,
-      enum: ["delivery", "pickup"],
+      enum: ["delivery"],
       required: true,
     },
-    paypalOrderId: { 
-      type: String, 
+    paypalOrderId: {
+      type: String,
       required: function () {
         return this.paymentMethod === "paypal";
       },
@@ -39,7 +36,8 @@ const OrderSchema = new Schema(
           }
           return true;
         },
-        message: "paypalOrderId is only allowed when paymentMethod is 'paypal'.",
+        message:
+          "paypalOrderId is only allowed when paymentMethod is 'paypal'.",
       },
     },
   },

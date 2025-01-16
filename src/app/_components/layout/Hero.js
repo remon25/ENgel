@@ -15,7 +15,7 @@ export default function Hero() {
         </p>
         <div className="flex gap-x-5 flex-col gap-y-2.5 lg:flex-row">
           <a
-            href="#"
+            href="/products/all"
             className="flex w-full lg:w-fit items-center text-white justify-center  bg-[#d4af5e] px-6 py-3.5 font-semibold hover:shadow-lg hover:drop-shadow transition duration-200"
           >
             <span>Jetzt einkaufen</span>

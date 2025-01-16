@@ -14,6 +14,7 @@ export default function ProductForm({
   const [moreImages, setMoreImages] = useState(productItem?.moreImages || []);
   const [name, setName] = useState(productItem?.name || "");
   const [price, setPrice] = useState(productItem?.price || "");
+  const [code, setCode] = useState(productItem?.code || "");
   const [stock, setStock] = useState(productItem?.stock || "");
   const [description, setDescription] = useState(
     productItem?.description || ""
@@ -57,6 +58,7 @@ export default function ProductForm({
       className="mt-8 p-4"
       onSubmit={(e) => {
         handleFormSubmit(e, {
+          code,
           bannerImage,
           moreImages,
           name,
@@ -187,6 +189,14 @@ export default function ProductForm({
                 </option>
               ))}
           </select>
+          <label htmlFor="price">Code</label>
+          <input
+            id="price"
+            type="text"
+            placeholder="code"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+          />
           <label htmlFor="price">Base Price</label>
           <input
             id="price"
