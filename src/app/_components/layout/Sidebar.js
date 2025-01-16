@@ -12,7 +12,7 @@ import Delivery from "../icons/Delivery";
 import Pickup from "../icons/Pickup";
 
 export default function Sidebar() {
-  const { cartProducts, removeCartProduct, orderType, showSidebarContext } =
+  const { cartProducts, removeCartProduct, orderType, showSidebarContext,totalCost } =
     useContext(cartContext);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
@@ -157,7 +157,7 @@ export default function Sidebar() {
             <div className="flex flex-col items-start">
               <div className="py-1 flex justify-end items-center">
                 <div className="text-gray-500">Zwischensumme : &nbsp; </div>
-                <div className="font-semibold"> {totalPrice} €</div>
+                <div className="font-semibold"> {totalCost} €</div>
               </div>
               {myDeliveryPrice !== undefined && (
                 <>
@@ -175,11 +175,8 @@ export default function Sidebar() {
                     <div className="text-gray-500">Gesamt : &nbsp; </div>
                     {orderType == "delivery" && (
                       <div className="font-semibold">
-                        {totalPrice + (freeDelivery ? 0 : myDeliveryPrice)} €
+                        {totalCost + (freeDelivery ? 0 : myDeliveryPrice)} €
                       </div>
-                    )}
-                    {orderType == "pickup" && (
-                      <div className="font-semibold">{totalPrice} €</div>
                     )}
                   </div>
                 </>

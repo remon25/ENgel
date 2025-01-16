@@ -23,7 +23,7 @@ export async function POST(req) {
       await req.json();
 
     // Step 1: Validate and sanitize address fields
-    if (!address.name || !address.email || !address.phone) {
+    if (!address.name || !address.email || !address.phone || !address.streetAdress) {
       return new Response("Missing required address fields", { status: 400 });
     }
     if (!validator.isEmail(address.email)) {
@@ -35,32 +35,21 @@ export async function POST(req) {
       name: sanitizeHtml(address.name),
       email: sanitizeHtml(address.email),
       phone: sanitizeHtml(address.phone),
-      city: sanitizeHtml(address.city),
       streetAdress: sanitizeHtml(address.streetAdress),
-      buildNumber: sanitizeHtml(address.buildNumber),
-      postalCode: sanitizeHtml(address.postalCode),
-      deliveryTime: sanitizeHtml(address.deliveryTime),
     };
 
     // Step 2: Validate order type
-    if (!["delivery", "pickup"].includes(orderType)) {
+    if (!["delivery"].includes(orderType)) {
       return new Response("Invalid order type", { status: 400 });
     }
 
-    // Fetch delivery price and minimum order for the city
     let cityDeliveryInfo;
     if (orderType === "delivery") {
+      const germanyRegex = /germany/i;
+      const containsGermany = germanyRegex.test(address.streetAdress);
       cityDeliveryInfo = await DeliveryPrice.findOne({
-        name: sanitizedAddress.city,
+        name: containsGermany ? "germany" : "other",
       }).lean();
-
-      if (!cityDeliveryInfo) {
-        console.error(
-          "City not supported for delivery:",
-          sanitizedAddress.city
-        );
-        return new Response("City not supported for delivery", { status: 400 });
-      }
 
       if (cityDeliveryInfo.isFreeDelivery && deliveryPrice > 0) {
         console.error("Delivery should be free for this city:", deliveryPrice);
@@ -76,18 +65,6 @@ export async function POST(req) {
           status: 400,
         });
       }
-
-      if (subtotal < cityDeliveryInfo.minimumOrder) {
-        console.error(
-          "Subtotal below minimum order for city:",
-          subtotal,
-          cityDeliveryInfo.minimumOrder
-        );
-        return new Response(
-          `The minimum order for delivery in ${sanitizedAddress.city} is ${cityDeliveryInfo.minimumOrder}`,
-          { status: 400 }
-        );
-      }
     }
     let finalTotalPrice;
     let computedDeliveryPrice;
@@ -99,10 +76,10 @@ export async function POST(req) {
       computedDeliveryPrice = 0;
     }
 
-    // Step 4: Calculate final total price and validate cart items
     const menuItems = await ProductItem.find({
       _id: { $in: cartProducts.map((item) => item._id) },
     }).lean();
+
 
     let calculatedSubtotal = 0;
     const sanitizedCartProducts = [];
@@ -112,13 +89,22 @@ export async function POST(req) {
         (item) => item._id.toString() === product._id
       );
 
-      if (!menuItem || menuItem.price !== parseFloat(product.price)) {
-        return new Response("Price mismatch or invalid product", {
+      if (!menuItem) {
+        console.error("Product not found in database:", product._id);
+        return new Response(
+          `Product with _id ${product._id} does not exist in the database`,
+          { status: 400 }
+        );
+      }
+
+      if (menuItem.price !== parseFloat(product.price)) {
+        console.error("Price mismatch for product:", product);
+        return new Response(`Price mismatch for product ${product.name}`, {
           status: 400,
         });
       }
 
-      let productTotal = menuItem.price;
+      let productTotal = menuItem.price * (product.quantity || 1);
 
       if (product.size) {
         const selectedSize = menuItem.sizes.find(
@@ -126,25 +112,41 @@ export async function POST(req) {
             size._id.toString() === product.size._id &&
             size.price === product.size.price
         );
+
         if (!selectedSize) {
-          return new Response("Invalid size selected", { status: 400 });
+          console.error(
+            "Invalid size for product:",
+            product.size,
+            product.name
+          );
+          return new Response(
+            `Invalid size '${product.size.name}' for product ${product.name}`,
+            { status: 400 }
+          );
         }
-        productTotal += selectedSize.price;
+
+        productTotal += selectedSize.price * (product.quantity || 1);
       }
 
-      if (product.extras) {
-        for (const extra of product.extras) {
-          const selectedExtra = menuItem.extraIngredientPrice.find(
-            (menuExtra) =>
-              menuExtra._id.toString() === extra._id &&
-              menuExtra.price === extra.price
-          );
-          if (!selectedExtra) {
-            return new Response("Invalid extra selected", { status: 400 });
-          }
-          productTotal += selectedExtra.price;
-        }
-      }
+      // if (product.extras && product.extras.length > 0) {
+      //   for (const extra of product.extras) {
+      //     const selectedExtra = menuItem.extraIngredientPrice.find(
+      //       (menuExtra) =>
+      //         menuExtra._id.toString() === extra._id &&
+      //         menuExtra.price === extra.price
+      //     );
+
+      //     if (!selectedExtra) {
+      //       console.error("Invalid extra for product:", extra, product.name);
+      //       return new Response(
+      //         `Invalid extra '${extra.name}' for product ${product.name}`,
+      //         { status: 400 }
+      //       );
+      //     }
+
+      //     productTotal += selectedExtra.price;
+      //   }
+      // }
 
       calculatedSubtotal += productTotal;
 
@@ -153,14 +155,27 @@ export async function POST(req) {
         bannerImage: sanitizeHtml(product.bannerImage),
         name: sanitizeHtml(product.name),
         description: sanitizeHtml(product.description),
+        category: product.category,
         price: parseFloat(product.price),
+        quantity: parseFloat(product.quantity),
+        sizes: product.sizes,
+        extraIngredientPrice: product.extraIngredientPrice,
         size: product.size,
         extras: product.extras,
       });
     }
 
     if (calculatedSubtotal !== subtotal) {
-      return new Response("Subtotal mismatch", { status: 400 });
+      console.error(
+        "Subtotal mismatch. Calculated:",
+        calculatedSubtotal,
+        "Provided:",
+        subtotal
+      );
+      return new Response(
+        `Subtotal mismatch. Calculated: ${calculatedSubtotal}, Provided: ${subtotal}`,
+        { status: 400 }
+      );
     }
 
     finalTotalPrice =
@@ -187,13 +202,8 @@ export async function POST(req) {
       name: sanitizedAddress.name,
       email: sanitizedAddress.email,
       phone: sanitizedAddress.phone,
-      city: sanitizedAddress.city,
       streetAdress: sanitizedAddress.streetAdress,
-      buildNumber: sanitizedAddress.buildNumber,
-      postalCode: sanitizedAddress.postalCode,
-      deliveryTime: sanitizedAddress.deliveryTime,
       cartProducts: sanitizedCartProducts,
-      payOnDelivery: false,
       subtotal,
       deliveryPrice: computedDeliveryPrice,
       finalTotalPrice,

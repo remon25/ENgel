@@ -188,12 +188,12 @@ export default function ProductPage() {
             <div className="flex space-x-4 mb-6">
               <button
                 onClick={handleAddToCart}
-                className="bg-[#d4af5e] flex gap-2 items-center text-white px-6 py-2 hover:bg-[#d4af50] focus:outline-none"
+                className="bg-[#d4af5e] flex gap-2 items-center text-white px-2 md:px-6 py-2 hover:bg-[#d4af50] focus:outline-none"
               >
                 <Cart />
                 In den Warenkorb
               </button>
-              <Link href="/cart" className="flex gap-2 items-center border border-[#121212] px-6 py-2 hover:bg-[#d4af50] hover:border-[#d4af50] hover:text-white focus:outline-none">
+              <Link href="/cart" className="flex gap-2 items-center border border-[#121212] px-2 md:px-6 py-2 hover:bg-[#d4af50] hover:border-[#d4af50] hover:text-white focus:outline-none">
                 Zur Kasse
               </Link>
             </div>

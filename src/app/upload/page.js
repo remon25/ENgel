@@ -7,7 +7,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -20,7 +20,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -33,7 +33,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -46,7 +46,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -59,7 +59,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -72,7 +72,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -85,7 +85,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -98,7 +98,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -111,7 +111,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -124,7 +124,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -137,7 +137,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -150,7 +150,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -163,7 +163,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -176,7 +176,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -189,7 +189,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -202,7 +202,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -215,7 +215,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -228,7 +228,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -241,7 +241,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -254,7 +254,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -267,7 +267,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -280,7 +280,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -293,7 +293,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -306,7 +306,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -319,7 +319,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -332,7 +332,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -345,7 +345,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -358,7 +358,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -371,7 +371,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -384,7 +384,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -397,7 +397,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -410,7 +410,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -423,7 +423,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -436,7 +436,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -449,7 +449,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -462,7 +462,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -475,7 +475,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -488,7 +488,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -501,7 +501,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -514,7 +514,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -527,7 +527,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -540,7 +540,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -553,7 +553,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -566,7 +566,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],
@@ -579,7 +579,7 @@ export default function page() {
       sizes: [
         { name: "30ml", price: 5 },
         { name: "50ml", price: 15 },
-        { name: "100ml", price: 45 },
+        { name: "100ml", price: 35 },
         { name: "5ml(Duftöl)", price: 0 },
         { name: "10ml(Duftöl)", price: 5 },
       ],

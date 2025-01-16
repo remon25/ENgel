@@ -26,7 +26,12 @@ export async function POST(req) {
     } = body;
 
     // Validate and sanitize address fields
-    if (!address.name || !address.email || !address.phone) {
+    if (
+      !address.name ||
+      !address.email ||
+      !address.phone ||
+      !address.streetAdress
+    ) {
       console.error("Missing required address fields:", address);
       return new Response("Missing required address fields", { status: 400 });
     }
@@ -45,7 +50,6 @@ export async function POST(req) {
       name: sanitizeHtml(address.name),
       email: sanitizeHtml(address.email),
       phone: sanitizeHtml(address.phone),
-      city: sanitizeHtml(address.city),
       streetAdress: sanitizeHtml(address.streetAdress),
     };
 
@@ -66,10 +70,11 @@ export async function POST(req) {
     // Fetch delivery price and minimum order for the city
     let cityDeliveryInfo;
     if (orderType === "delivery") {
+      const germanyRegex = /germany/i;
+      const containsGermany = germanyRegex.test(address.streetAdress);
       cityDeliveryInfo = await DeliveryPrice.findOne({
-        name: sanitizedAddress.city,
+        name: containsGermany ? "germany" : "other",
       }).lean();
-
 
       if (cityDeliveryInfo.isFreeDelivery && deliveryPrice > 0) {
         console.error("Delivery should be free for this city:", deliveryPrice);
@@ -86,17 +91,17 @@ export async function POST(req) {
         });
       }
 
-      if (subtotal < cityDeliveryInfo.minimumOrder) {
-        console.error(
-          "Subtotal below minimum order for city:",
-          subtotal,
-          cityDeliveryInfo.minimumOrder
-        );
-        return new Response(
-          `The minimum order for delivery in ${sanitizedAddress.city} is ${cityDeliveryInfo.minimumOrder}`,
-          { status: 400 }
-        );
-      }
+      // if (subtotal < cityDeliveryInfo.minimumOrder) {
+      //   console.error(
+      //     "Subtotal below minimum order for city:",
+      //     subtotal,
+      //     cityDeliveryInfo.minimumOrder
+      //   );
+      //   return new Response(
+      //     `The minimum order for delivery in ${sanitizedAddress.city} is ${cityDeliveryInfo.minimumOrder}`,
+      //     { status: 400 }
+      //   );
+      // }
     }
 
     let finalTotalPrice;
@@ -137,7 +142,7 @@ export async function POST(req) {
         });
       }
 
-      let productTotal = menuItem.price;
+      let productTotal = menuItem.price * (product.quantity || 1);
 
       if (product.size) {
         const selectedSize = menuItem.sizes.find(
@@ -158,28 +163,28 @@ export async function POST(req) {
           );
         }
 
-        productTotal += selectedSize.price;
+        productTotal += selectedSize.price * (product.quantity || 1);
       }
 
-      if (product.extras && product.extras.length > 0) {
-        for (const extra of product.extras) {
-          const selectedExtra = menuItem.extraIngredientPrice.find(
-            (menuExtra) =>
-              menuExtra._id.toString() === extra._id &&
-              menuExtra.price === extra.price
-          );
+      // if (product.extras && product.extras.length > 0) {
+      //   for (const extra of product.extras) {
+      //     const selectedExtra = menuItem.extraIngredientPrice.find(
+      //       (menuExtra) =>
+      //         menuExtra._id.toString() === extra._id &&
+      //         menuExtra.price === extra.price
+      //     );
 
-          if (!selectedExtra) {
-            console.error("Invalid extra for product:", extra, product.name);
-            return new Response(
-              `Invalid extra '${extra.name}' for product ${product.name}`,
-              { status: 400 }
-            );
-          }
+      //     if (!selectedExtra) {
+      //       console.error("Invalid extra for product:", extra, product.name);
+      //       return new Response(
+      //         `Invalid extra '${extra.name}' for product ${product.name}`,
+      //         { status: 400 }
+      //       );
+      //     }
 
-          productTotal += selectedExtra.price;
-        }
-      }
+      //     productTotal += selectedExtra.price;
+      //   }
+      // }
 
       calculatedSubtotal += productTotal;
 
@@ -190,6 +195,7 @@ export async function POST(req) {
         description: sanitizeHtml(product.description),
         category: product.category,
         price: parseFloat(product.price),
+        quantity: parseFloat(product.quantity),
         sizes: product.sizes,
         extraIngredientPrice: product.extraIngredientPrice,
         size: product.size,
@@ -214,7 +220,6 @@ export async function POST(req) {
       name: sanitizedAddress.name,
       email: sanitizedAddress.email,
       phone: sanitizedAddress.phone,
-      city: sanitizedAddress.city,
       streetAdress: sanitizedAddress.streetAdress,
       cartProducts: sanitizedCartProducts,
       payOnDelivery: false,
@@ -227,9 +232,9 @@ export async function POST(req) {
     });
 
     const stripeLineItems = [];
-    
+
     for (const product of cartProducts) {
-      let productTotal = product.price;
+      let productTotal = product.price * (product.quantity || 1);
 
       if (product.size) {
         const selectedSize = product.sizes.find(
@@ -239,23 +244,23 @@ export async function POST(req) {
         );
 
         if (selectedSize) {
-          productTotal += selectedSize.price;
+          productTotal += selectedSize.price * (product.quantity || 1);
         }
       }
 
-      if (product.extras && product.extras.length > 0) {
-        for (const extra of product.extras) {
-          const selectedExtra = product.extraIngredientPrice.find(
-            (menuExtra) =>
-              menuExtra._id.toString() === extra._id &&
-              menuExtra.price === extra.price
-          );
+      // if (product.extras && product.extras.length > 0) {
+      //   for (const extra of product.extras) {
+      //     const selectedExtra = product.extraIngredientPrice.find(
+      //       (menuExtra) =>
+      //         menuExtra._id.toString() === extra._id &&
+      //         menuExtra.price === extra.price
+      //     );
 
-          if (selectedExtra) {
-            productTotal += selectedExtra.price;
-          }
-        }
-      }
+      //     if (selectedExtra) {
+      //       productTotal += selectedExtra.price;
+      //     }
+      //   }
+      // }
 
       stripeLineItems.push({
         quantity: 1,
@@ -283,12 +288,16 @@ export async function POST(req) {
       mode: "payment",
       payment_method_types: ["card", "klarna"], // Include Klarna
       customer_email: sanitizedAddress.email,
-      success_url: process.env.NEXTAUTH_URL + "orders/" + orderDoc._id.toString() + "?clear-cart=1",
+      success_url:
+        process.env.NEXTAUTH_URL +
+        "orders/" +
+        orderDoc._id.toString() +
+        "?clear-cart=1",
       cancel_url: process.env.NEXTAUTH_URL + "cart?canceled=1",
       metadata: { orderId: orderDoc._id.toString() },
       payment_intent_data: { metadata: { orderId: orderDoc._id.toString() } },
     });
-    
+
     return Response.json(stripeSession.url);
   } catch (error) {
     console.error("Error occurred:", error);

@@ -17,18 +17,18 @@ export default function CartProduct({
 
     >
       {quantity > 1 && (
-        <div className="flex items-center font-semibold">{quantity} x</div>
+        <div className="flex items-center text-[12px] font-semibold">{quantity} x</div>
       )}
-      <div className="w-16">
+      <div className="w-[50px]">
         <Image
-          width={240}
-          height={240}
+          width={50}
+          height={50}
           src={product.bannerImage || "/default-menu.png"}
           alt={product.name}
         />
       </div>
       <div className="grow">
-        <h3 className="font-bold text-[12px]">{product.name}</h3>
+        <h3 className="font-bold text-[11px]">{product.name}</h3>
         {product.size && (
           <div className="text-xs text-nowrap">
             Größe: <span>{product.size.name}</span>

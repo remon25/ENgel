@@ -7,7 +7,6 @@ export default function Adress() {
         <label>
           <Address />
         </label>
-      
       </form>
     </div>
   );

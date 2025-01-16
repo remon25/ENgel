@@ -104,8 +104,6 @@ function OrderPage() {
     );
   }
 
-
-
   // Render order details if order is found
   return (
     <section className="max-w-4xl mx-auto mt-4 p-4">
@@ -120,7 +118,11 @@ function OrderPage() {
         <div className="grid md:grid-cols-2 md:gap-16">
           <div>
             {order.cartProducts.map((product, index) => (
-              <CartProduct key={`${product._id}-${index}`} product={product} />
+              <CartProduct
+                key={`${product._id}-${index}`}
+                product={product}
+                quantity={product.quantity}
+              />
             ))}
             <div className="text-left py-2 text-gray-500">
               Zwischensumme:{" "}

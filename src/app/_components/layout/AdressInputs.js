@@ -1,8 +1,5 @@
 "use client";
 import { useState } from "react";
-import Dialog from "../Dialog";
-import ChevronRight from "../icons/ChevronRight";
-import Cash from "../icons/Cash";
 import Paypal from "../icons/Paypal";
 import Credit from "../icons/Credit";
 import Address from "@/app/_components/Address";
@@ -11,20 +8,11 @@ export default function AddressInputs({
   addressProps,
   setAddressProp,
   deliveryPrices,
-  timeOptions,
   disabled = false,
   orderPage = false,
-  cityInfo,
   orderType,
 }) {
-  const {
-    phone,
-    streetAdress,
-    name,
-    email,
-    city,
-    paymentMethod,
-  } = addressProps;
+  const { phone, streetAdress, name, email, paymentMethod } = addressProps;
 
   const cities = Object.keys(deliveryPrices || []);
   const [showPopup, setShowPopup] = useState(false);
@@ -66,60 +54,24 @@ export default function AddressInputs({
         value={phone || ""}
         onChange={(ev) => setAddressProp("phone", ev.target.value)}
       />
-      {orderType === "delivery" && (
-        <>
-          <label>Straßenadresse</label>
-          <input
-            disabled={disabled}
-            type="text"
-            placeholder="Straßenadresse"
-            value={streetAdress || ""}
-            onChange={(ev) => setAddressProp("streetAdress", ev.target.value)}
-          />
-          <Address/>
-          
-          <div className="grid grid-cols-1 gap-2">
-            <div>
-              <label>Stadt</label>
-              {orderPage ? (
-                <input
-                  disabled={disabled}
-                  type="text"
-                  placeholder="Stadt"
-                  value={city || ""}
-                />
-              ) : (
-                <select
-                  disabled={disabled}
-                  value={city || ""}
-                  onChange={(ev) => {
-                    setAddressProp("city", ev.target.value);
-                    setAddressProp(
-                      "postalCode",
-                      cityInfo.find((c) => c.name === ev.target.value)
-                        ?.postalCode
-                    );
-                  }
-                
-                
-                }
-                >
-                  <option value={""}>Wählen Sie eine Stadt</option>
-                  {cities.map((city) => (
-                    <option key={city} value={city}>
-                      {city}
-                    </option>
-                  ))}
-                </select>
-              )
-              
-              
-              }
-            </div>
-          </div>
-        </>
+      {!orderPage && (
+        <div className="mb-8">
+          <Address setAddressProp={setAddressProp} />
+        </div>
       )}
-
+      {orderPage && (
+        <div className="mb-8">
+          <label htmlFor="address">Adresse</label>
+          <input
+            disabled
+            value={addressProps?.streetAdress || ""}
+            id="address"
+            type="text"
+            placeholder="Adresse"
+            className="input-address"
+          />
+        </div>
+      )}
       <div className={`${orderType === "delivery" ? "-mt-4" : "mt-0"} w-full`}>
         {orderPage && (
           <>

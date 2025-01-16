@@ -21,26 +21,6 @@ import Spinner from "../_components/layout/Spinner";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
-function generateTimeSlots() {
-  const timeSlots = [];
-  const now = new Date();
-
-  // Set time to 1 hour from now and round to the next 15-minute interval
-  now.setMinutes(Math.ceil((now.getMinutes() + 60) / 15) * 15, 0, 0);
-
-  for (let i = 0; i < 16; i++) {
-    // Generate 16 time slots (4 hours)
-    const localTime = now.toLocaleTimeString("en-GB", {
-      timeZone: "Europe/Berlin",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-    timeSlots.push(localTime);
-    now.setMinutes(now.getMinutes() + 15); // Increment by 15 minutes
-  }
-  return timeSlots;
-}
-
 export default function CartPage() {
   const { cartProducts, removeCartProduct, orderType } =
     useContext(cartContext);
@@ -51,6 +31,7 @@ export default function CartPage() {
     error: profileError,
   } = useProfile();
   const [deliveryPrices, setDeliveryPrices] = useState({});
+  const [deliveryPrice, setDeliveryPrice] = useState(undefined);
   const [loadingDeliveryPrices, setLoadingDeliveryPrices] = useState(true);
   const [finalTotalPrice, setFinalTotalPrice] = useState(0);
   const [timeOptions, setTimeOptions] = useState([]);
@@ -58,17 +39,14 @@ export default function CartPage() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("credit");
   const [reachMinimumOreder, setReachMinimumOreder] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [cityInfo, setCityInfo] = useState([]);
   const { session } = useSession();
   const [minimumOrder, setMinimumOrder] = useState(undefined);
   const [disabled, setDisabled] = useState(false);
 
-  let deliveryTime = "ASAP";
   let totalPrice = 0;
-  let buildNumber = "";
 
   for (const p of cartProducts) {
-    totalPrice += cartProductPrice(p);
+    totalPrice += cartProductPrice(p) * (p?.quantity || 1);
   }
 
   useEffect(() => {
@@ -95,7 +73,6 @@ export default function CartPage() {
         const data = await response.json();
         const prices = {};
         data.forEach((price) => (prices[price.name] = price.price));
-        setCityInfo(data);
         setDeliveryPrices(prices);
         setLoadingDeliveryPrices(false);
       } catch (error) {
@@ -106,47 +83,43 @@ export default function CartPage() {
   }, []);
 
   useEffect(() => {
+    const germanyRegex = /germany/i;
+    const containsGermany = germanyRegex.test(address.streetAdress);
     const calculateFinalPrice = () => {
-      const deliveryPrice = deliveryPrices[address.city] || 0;
-      if (deliveryPrices[address.city] !== undefined) {
+      const deliveryPrice = containsGermany
+        ? deliveryPrices.germany
+        : deliveryPrices.other;
+      setDeliveryPrice(deliveryPrice);
+
+      if (deliveryPrices !== undefined) {
         setFinalTotalPrice(totalPrice + deliveryPrice);
       } else {
         setFinalTotalPrice("");
       }
     };
     calculateFinalPrice();
-  }, [totalPrice, address.city, deliveryPrices]);
+  }, [totalPrice, address.city, deliveryPrices, address.streetAdress]);
 
   useEffect(() => {
     if (profileData) {
-      const { phone, streetAdress, city, name, email } =
-        profileData;
+      const { phone, streetAdress, name, email } = profileData;
       const addressFromProfile = {
         phone,
         streetAdress,
-        city,
         email,
         name,
       };
-      setAddress({ ...addressFromProfile, deliveryTime });
+      setAddress({ ...addressFromProfile });
     }
-  }, [profileData, buildNumber, deliveryTime]);
+  }, [profileData]);
 
-  useEffect(() => {
-    setTimeOptions(["ASAP", ...generateTimeSlots()]);
-  }, []);
+  console.log(reachMinimumOreder, "ordermini");
 
   function handleAddressChange(propName, value) {
     setAddress((prevAddress) => ({ ...prevAddress, [propName]: value }));
   }
 
-  const requiredFields = [
-    "name",
-    "email",
-    "phone",
-    "streetAdress",
-    "city",
-  ];
+  const requiredFields = ["name", "email", "phone", "streetAdress"];
 
   const pickupRequiredFields = ["name", "email", "phone"];
 
@@ -154,6 +127,7 @@ export default function CartPage() {
     orderType === "delivery"
       ? requiredFields.every((field) => address[field])
       : pickupRequiredFields.every((field) => address[field]);
+  console.log(isComplete);
 
   async function proceedToCheckout(ev) {
     ev.preventDefault();
@@ -174,7 +148,7 @@ export default function CartPage() {
           cartProducts,
           address,
           subtotal: totalPrice,
-          deliveryPrice: deliveryPrices[address.city],
+          deliveryPrice: deliveryPrice,
           orderType,
         }),
       }).then(async (response) => {
@@ -195,19 +169,6 @@ export default function CartPage() {
     });
   }
 
-
-  useEffect(() => {
-    const cityData = cityInfo.find((c) => c.name === address?.city);
-    setMinimumOrder(cityData?.minimumOrder);
-  }, [cityInfo, address?.city]);
-
-  useEffect(() => {
-    if (totalPrice >= minimumOrder) {
-      setReachMinimumOreder(true);
-    } else {
-      setReachMinimumOreder(false);
-    }
-  }, [minimumOrder, totalPrice]);
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -215,6 +176,8 @@ export default function CartPage() {
       </div>
     );
   }
+
+  console.log(cartProducts);
 
   if (cartProducts?.length === 0) {
     return (
@@ -241,10 +204,8 @@ export default function CartPage() {
               addressProps={address}
               setAddressProp={handleAddressChange}
               deliveryPrices={deliveryPrices}
-              deliveryTime={deliveryTime}
               timeOptions={timeOptions}
               selectedPaymentMethod={selectedPaymentMethod}
-              cityInfo={cityInfo}
               orderType={orderType}
               disabled={disabled}
             />
@@ -360,8 +321,7 @@ export default function CartPage() {
                                         cartProducts,
                                         address,
                                         subtotal: totalPrice,
-                                        deliveryPrice:
-                                          deliveryPrices[address.city],
+                                        deliveryPrice: deliveryPrice,
                                         orderType,
                                       }),
                                     });
@@ -421,7 +381,9 @@ export default function CartPage() {
                 ) : (
                   <p className="text-center text-sm text-gray-800 bg-orange-100 rounded-[5px] p-2 mt-4">
                     {!minimumOrder && !address.city && (
-                      <span>Stadt auswählen</span>
+                      <span className="text-xs">
+                        Hängt von Ihrer Adresse ab
+                      </span>
                     )}
                     {minimumOrder && address.city && (
                       <span>
@@ -454,6 +416,7 @@ export default function CartPage() {
                 product={product}
                 onRemove={removeCartProduct}
                 index={index}
+                quantity={product.quantity || 1}
               />
             ))}
 
@@ -466,17 +429,17 @@ export default function CartPage() {
                 </div>
                 <div className="font-semibold">
                   {totalPrice} € <br />
-                  {deliveryPrices[address.city] === 0 ? (
+                  {deliveryPrice === 0 ? (
                     "kostenlos"
-                  ) : deliveryPrices[address.city] == undefined ? (
-                    <span className="text-gray-500 text-xs">
-                      Stadt auswählen
+                  ) : deliveryPrice == undefined ? (
+                    <span className="text-gray-500 text-[0.6rem]">
+                      Hängt von Ihrer Adresse ab
                     </span>
                   ) : (
-                    deliveryPrices[address.city] + " €"
+                    deliveryPrice + " €"
                   )}
                   <br />
-                  {totalPrice + (deliveryPrices[address.city] || 0)} €
+                  {totalPrice + (deliveryPrice || 0)} €
                 </div>
               </div>
             </>

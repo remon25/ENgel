@@ -19,6 +19,13 @@ export function cartProductPrice(cartProduct) {
   return price;
 }
 
+function calculateTotal(cartProducts) {
+  return cartProducts.reduce((total, cartProduct) => {
+    const productPrice = cartProductPrice(cartProduct);
+    return total + productPrice * cartProduct.quantity;
+  }, 0);
+}
+
 export default function AppProvider({ children }) {
   const [cartProducts, setCartProducts] = useState([]);
   const [isClient, setIsClient] = useState(false);
@@ -70,16 +77,14 @@ export default function AppProvider({ children }) {
 
   function addToCart(product, size = null, extras = [], quantity = 1) {
     setCartProducts((prev) => {
-      // Find if the product already exists in the cart
       const existingProductIndex = prev.findIndex(
         (cartProduct) =>
           cartProduct._id === product._id &&
           cartProduct.size?._id === size?._id &&
           JSON.stringify(cartProduct.extras) === JSON.stringify(extras)
       );
-  
+
       if (existingProductIndex >= 0) {
-        // If the product exists, update its quantity
         const updatedProducts = [...prev];
         updatedProducts[existingProductIndex] = {
           ...updatedProducts[existingProductIndex],
@@ -88,17 +93,17 @@ export default function AppProvider({ children }) {
         saveCartProductsToLocalStorage(updatedProducts);
         return updatedProducts;
       } else {
-        // Add a new product to the cart
         const newProduct = { ...product, size, extras, quantity };
         const newProducts = [...prev, newProduct];
         saveCartProductsToLocalStorage(newProducts);
         return newProducts;
       }
     });
-  
+
     toast.success("Product added to cart!");
   }
-  
+
+  const totalCost = calculateTotal(cartProducts);
 
   return (
     <SessionProvider>
@@ -113,6 +118,7 @@ export default function AppProvider({ children }) {
           setOrderType,
           showSidebarContext,
           setShowSidebarContext,
+          totalCost,
         }}
       >
         {children}

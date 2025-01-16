@@ -6,7 +6,6 @@ const OrderSchema = new Schema(
     email: String,
     phone: String,
     streetAdress: String,
-    city: String,
     cartProducts: Object,
     paid: { type: Boolean, default: false },
     deliveryTime: String,

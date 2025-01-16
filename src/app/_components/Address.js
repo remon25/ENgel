@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { getAddressAutocomplete } from "../_utilis/openCage";
 
-export default function Address() {
+export default function Address({ setAddressProp }) {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -12,6 +12,7 @@ export default function Address() {
   const handleInputChange = (e) => {
     const value = e.target.value;
     setQuery(value);
+    setAddressProp("streetAdress", value);
 
     if (value.length < 3) {
       setSuggestions([]);
@@ -42,6 +43,7 @@ export default function Address() {
 
   const handleSelectSuggestion = (suggestion) => {
     setQuery(suggestion);
+    setAddressProp("streetAdress", suggestion);
     setSuggestions([]); // Clear suggestions after selection
 
     // Validate the selected suggestion
@@ -59,11 +61,13 @@ export default function Address() {
 
   return (
     <div className="relative">
+      <label htmlFor="address">Adresse</label>
       <input
+        id="address"
         type="text"
         value={query}
         onChange={handleInputChange}
-        placeholder="Enter your address"
+        placeholder="Adresse"
         className="input-address"
       />
       {isLoading && <p>Loading...</p>}
@@ -82,7 +86,7 @@ export default function Address() {
             maxHeight: "200px",
             overflowY: "auto",
             margin: "0",
-            padding: "0",
+            padding: "0 0.5rem",
             backgroundColor: "white",
             border: "1px solid #ccc",
             listStyleType: "none",
@@ -91,7 +95,11 @@ export default function Address() {
           className="border-t-[none] rounded-[5px]"
         >
           {suggestions.map((suggestion, index) => (
-            <li className="my-2 hover:text-gray-900 cursor-pointer" key={index} onClick={() => handleSelectSuggestion(suggestion)}>
+            <li
+              className="my-2 hover:text-gray-900 cursor-pointer"
+              key={index}
+              onClick={() => handleSelectSuggestion(suggestion)}
+            >
               {suggestion}
             </li>
           ))}
