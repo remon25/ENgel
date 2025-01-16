@@ -5,7 +5,11 @@ export async function getAddressAutocomplete(query) {
   const data = await response.json();
 
   if (data.results && data.results.length > 0) {
-    return data.results.map(result => result.formatted);  // Return formatted addresses
+    // Map results to include both the formatted address and country
+    return data.results.map(result => ({
+      formatted: result.formatted,
+      country: result.components.country, // Extract the country
+    }));
   }
   return [];
 }

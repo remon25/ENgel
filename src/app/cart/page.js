@@ -42,9 +42,10 @@ export default function CartPage() {
   const { session } = useSession();
   const [minimumOrder, setMinimumOrder] = useState(undefined);
   const [disabled, setDisabled] = useState(false);
+  const [insideGermany, setInsideGermany] = useState(false);
 
   let totalPrice = 0;
-
+  console.log(insideGermany, "inside germany ???");
   for (const p of cartProducts) {
     totalPrice += cartProductPrice(p) * (p?.quantity || 1);
   }
@@ -83,8 +84,7 @@ export default function CartPage() {
   }, []);
 
   useEffect(() => {
-    const germanyRegex = /germany/i;
-    const containsGermany = germanyRegex.test(address.streetAdress);
+    const containsGermany = insideGermany;
     const calculateFinalPrice = () => {
       const deliveryPrice = containsGermany
         ? deliveryPrices.germany
@@ -98,7 +98,13 @@ export default function CartPage() {
       }
     };
     calculateFinalPrice();
-  }, [totalPrice, address.city, deliveryPrices, address.streetAdress]);
+  }, [
+    totalPrice,
+    address.city,
+    deliveryPrices,
+    address.streetAdress,
+    insideGermany,
+  ]);
 
   useEffect(() => {
     if (profileData) {
@@ -208,6 +214,7 @@ export default function CartPage() {
               selectedPaymentMethod={selectedPaymentMethod}
               orderType={orderType}
               disabled={disabled}
+              setInsideGermany={setInsideGermany}
             />
             <div className="w-full">
               <button

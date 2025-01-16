@@ -11,6 +11,7 @@ export default function AddressInputs({
   disabled = false,
   orderPage = false,
   orderType,
+  setInsideGermany,
 }) {
   const { phone, streetAdress, name, email, paymentMethod } = addressProps;
 
@@ -56,7 +57,10 @@ export default function AddressInputs({
       />
       {!orderPage && (
         <div className="mb-8">
-          <Address setAddressProp={setAddressProp} />
+          <Address
+            setAddressProp={setAddressProp}
+            setInsideGermany={setInsideGermany}
+          />
         </div>
       )}
       {orderPage && (

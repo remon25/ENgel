@@ -2,12 +2,13 @@
 import { useState, useEffect, useRef } from "react";
 import { getAddressAutocomplete } from "../_utilis/openCage";
 
-export default function Address({ setAddressProp }) {
+export default function Address({ setAddressProp, setInsideGermany }) {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isValidAddress, setIsValidAddress] = useState(true);
-  const debounceTimer = useRef(null); // Ref to store debounce timer
+  const [isInsideGermany, setIsInsideGermany] = useState(null); // New state
+  const debounceTimer = useRef(null);
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -16,15 +17,13 @@ export default function Address({ setAddressProp }) {
 
     if (value.length < 3) {
       setSuggestions([]);
-      return; // Avoid searching for very short input
+      return;
     }
 
-    // Clear the previous timer to avoid calling the API too often
     if (debounceTimer.current) {
       clearTimeout(debounceTimer.current);
     }
 
-    // Set a new timer to call the API after a delay (500ms in this case)
     debounceTimer.current = setTimeout(async () => {
       setIsLoading(true);
 
@@ -38,20 +37,27 @@ export default function Address({ setAddressProp }) {
       }
 
       setIsLoading(false);
-    }, 500); // Delay in milliseconds (500ms)
+    }, 500);
   };
 
   const handleSelectSuggestion = (suggestion) => {
-    setQuery(suggestion);
-    setAddressProp("streetAdress", suggestion);
-    setSuggestions([]); // Clear suggestions after selection
+    setQuery(suggestion.formatted); // Use formatted address
+    setAddressProp("streetAdress", suggestion.formatted);
 
-    // Validate the selected suggestion
+    // Check if the address is in Germany
+    if (suggestion.country === "Germany") {
+      setIsInsideGermany(true);
+      setInsideGermany(true);
+    } else {
+      setIsInsideGermany(false);
+      setInsideGermany(false);
+    }
+
+    setSuggestions([]);
     setIsValidAddress(true);
   };
 
   useEffect(() => {
-    // Cleanup the timer if the component unmounts
     return () => {
       if (debounceTimer.current) {
         clearTimeout(debounceTimer.current);
@@ -67,7 +73,7 @@ export default function Address({ setAddressProp }) {
         type="text"
         value={query}
         onChange={handleInputChange}
-        placeholder="Adresse"
+        placeholder="ex: 21698 Harsefeld, Germany"
         className="input-address"
       />
       {isLoading && <p>Loading...</p>}
@@ -100,7 +106,7 @@ export default function Address({ setAddressProp }) {
               key={index}
               onClick={() => handleSelectSuggestion(suggestion)}
             >
-              {suggestion}
+              {suggestion.formatted}
             </li>
           ))}
         </ul>
