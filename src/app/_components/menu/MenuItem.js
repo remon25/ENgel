@@ -12,6 +12,7 @@ export default function MenuItem({ menuItemInfo, isOffersCategory }) {
     description,
     bannerImage,
     price,
+    beforeSalePrice,
     sizes,
     extraIngredientPrice,
     _id,
@@ -111,11 +112,12 @@ export default function MenuItem({ menuItemInfo, isOffersCategory }) {
             </p>
             <div className="flex items-center">
               <p className="text-lg font-semibold text-black cursor-auto my-3">
-               <span className="text-gray-500 mr-3 uppercase text-xs">ab</span> {price} €
+                <span className="text-gray-500 mr-3 uppercase text-xs">ab</span>{" "}
+                {price} €
               </p>
               <del>
                 <p className="text-sm text-gray-600 cursor-auto ml-2">
-                  {price * 1.2} €
+                  {beforeSalePrice || price * 1.2} €
                 </p>
               </del>
               <div className="ml-auto">

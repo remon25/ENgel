@@ -100,6 +100,7 @@ export default function Header() {
     fetchDeliveryPrices();
   }, []);
 
+  
   return (
     <header
       id="header"
@@ -133,9 +134,11 @@ export default function Header() {
             <Bars2 />
           </button>
           <div
-            onClick={() =>
-              setShowSidebarContext((showSidebarContext) => !showSidebarContext)
-            }
+            id="cartButton"
+            onClick={(e) => {
+              e.preventDefault();
+              setShowSidebarContext((prev) => !prev); // Toggle sidebar
+            }}
             className="relative"
           >
             {cartProducts.length > 0 && (
@@ -226,9 +229,11 @@ export default function Header() {
           )}
 
           <div
-            onClick={() =>
-              setShowSidebarContext((showSidebarContext) => !showSidebarContext)
-            }
+            id="cartButton"
+            onClick={(e) => {
+              e.preventDefault();
+              setShowSidebarContext((prev) => !prev); // Toggle sidebar
+            }}
             className="relative"
           >
             {cartProducts.length > 0 && (

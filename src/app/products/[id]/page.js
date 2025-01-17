@@ -122,7 +122,7 @@ export default function ProductPage() {
               <span className="text-2xl font-bold mr-2">{product.price}€</span>
               {product.price && (
                 <span className="text-gray-500 line-through">
-                  {product.price * 1.2}€
+                  {product.beforeSalePrice || product.price * 1.2}€
                 </span>
               )}
             </div>
@@ -193,7 +193,10 @@ export default function ProductPage() {
                 <Cart />
                 In den Warenkorb
               </button>
-              <Link href="/cart" className="flex gap-2 items-center border border-[#121212] px-2 md:px-6 py-2 hover:bg-[#d4af50] hover:border-[#d4af50] hover:text-white focus:outline-none">
+              <Link
+                href="/cart"
+                className="flex gap-2 items-center border border-[#121212] px-2 md:px-6 py-2 hover:bg-[#d4af50] hover:border-[#d4af50] hover:text-white focus:outline-none"
+              >
                 Zur Kasse
               </Link>
             </div>

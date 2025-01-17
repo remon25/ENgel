@@ -24,7 +24,7 @@ export default function Hero() {
         </div>
       </div>
       <div className="hero-image md:px-5 lg:px-0 w-full lg:w-1/2 rounded-3xl md:pt-2 lg:pt-0 relative isolate z-10">
-        <Image className="rounded-3xl w-full" src={banner} alt="" />
+        <Image quality={50} className="rounded-3xl w-full" src={banner} alt="hero img" />
       </div>
     </div>
   );

@@ -14,6 +14,7 @@ export default function ProductForm({
   const [moreImages, setMoreImages] = useState(productItem?.moreImages || []);
   const [name, setName] = useState(productItem?.name || "");
   const [price, setPrice] = useState(productItem?.price || "");
+  const [beforeSalePrice, setBeforeSalePrice] = useState(productItem?.beforeSalePrice || "");
   const [code, setCode] = useState(productItem?.code || "");
   const [stock, setStock] = useState(productItem?.stock || "");
   const [description, setDescription] = useState(
@@ -46,6 +47,7 @@ export default function ProductForm({
     setMoreImages([]);
     setName("");
     setPrice("");
+    setBeforeSalePrice("");
     setStock("");
     setDescription("");
     setSizes([]);
@@ -63,6 +65,7 @@ export default function ProductForm({
           moreImages,
           name,
           price,
+          beforeSalePrice,
           stock,
           description,
           category,
@@ -204,6 +207,15 @@ export default function ProductForm({
             placeholder="Price"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
+          />
+
+          <label htmlFor="price">Before sale price</label>
+          <input
+            id="before-sale-price"
+            type="number"
+            placeholder="Before sale price"
+            value={beforeSalePrice}
+            onChange={(e) => setBeforeSalePrice(e.target.value)}
           />
 
           <label htmlFor="price">Stock</label>

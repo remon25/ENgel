@@ -36,6 +36,9 @@ const ProductSchema = new Schema(
       type: Number,
       required: true,
     },
+    beforeSalePrice: {
+      type: Number,
+    },
     sizes: {
       type: [ExtraOptionSchema],
     },

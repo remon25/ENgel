@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import SectionHeader from "./SectionHeader";
 import CartProduct from "../menu/CartProduct";
 import { cartContext, cartProductPrice } from "../AppContext";
@@ -8,14 +8,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Spinner from "./Spinner";
 import { useProfile } from "../useProfile";
-import Delivery from "../icons/Delivery";
-import Pickup from "../icons/Pickup";
 
 export default function Sidebar() {
-  const { cartProducts, removeCartProduct, orderType, showSidebarContext,totalCost } =
-    useContext(cartContext);
+  const {
+    cartProducts,
+    removeCartProduct,
+    orderType,
+    showSidebarContext,
+    totalCost,
+    setShowSidebarContext,
+  } = useContext(cartContext);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(false);
+  const sidebarRef = useRef(null); // Reference for the sidebar
   const [loading, setLoading] = useState(true);
   const [deliveryPrices, setDeliveryPrices] = useState([]);
   const [myDeliveryPrice, setMyDeliveryPrice] = useState(undefined);
@@ -35,20 +39,6 @@ export default function Sidebar() {
   for (const p of cartProducts) {
     totalPrice += cartProductPrice(p);
   }
-
-  useEffect(() => {
-    // if (
-    //   pathname !== "/" &&
-    //   pathname !== "/menu" &&
-    //   !pathname.startsWith("/products")
-    // ) {
-    //   setShowSidebar(false);
-    // } else {
-    //   setShowSidebar(true);
-    // }
-    setShowSidebar(true);
-    if (!showSidebarContext) setShowSidebar(false);
-  }, [pathname, showSidebarContext]);
 
   useEffect(() => {
     const headerHeight = document.getElementById("header").scrollHeight;
@@ -114,12 +104,32 @@ export default function Sidebar() {
     }
   }, [profileData?.city, deliveryPrices, totalPrice]);
 
+  // Click outside logic
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target) &&
+        !event.target.closest("#cartButton") // Ensure it doesn't close on button click
+      ) {
+        setShowSidebarContext(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [setShowSidebarContext]);
+
+  const handleClickInside = (e) => {
+    e.stopPropagation();
+  };
+
   if (loading || loadingDeliveryPrices) {
     return (
       <aside
         id="sidebar"
         className={`sidebar ${
-          showSidebar ? "translate-x-0" : "translate-x-full"
+          showSidebarContext ? "translate-x-0" : "translate-x-full"
         } fixed top-0 bottom-0 right-0 h-screen w-[330px] z-[12] px-6 ${
           isScrolled ? "pt-1" : "pt-20"
         } flex flex-col justify-center items-center bg-white transition-all`}
@@ -130,9 +140,11 @@ export default function Sidebar() {
   }
   return (
     <aside
+      ref={sidebarRef}
       id="sidebar"
+      onClick={handleClickInside}
       className={`sidebar ${
-        showSidebar ? "translate-x-0" : "translate-x-full"
+        showSidebarContext ? "translate-x-0" : "translate-x-full"
       } fixed top-0 bottom-0 right-0 h-screen w-[330px] z-[12] px-6 ${
         isScrolled ? "pt-1" : "pt-[11rem]"
       } flex flex-col bg-white transition-all`}
