@@ -122,7 +122,7 @@ export default function ProductPage() {
               <span className="text-2xl font-bold mr-2">{product.price}€</span>
               {product.price && (
                 <span className="text-gray-500 line-through">
-                  {product.beforeSalePrice || product.price * 1.2}€
+                  {product.beforeSalePrice && product.beforeSalePrice > 0 && product.beforeSalePrice}€
                 </span>
               )}
             </div>

@@ -117,7 +117,10 @@ export default function MenuItem({ menuItemInfo, isOffersCategory }) {
               </p>
               <del>
                 <p className="text-sm text-gray-600 cursor-auto ml-2">
-                  {beforeSalePrice || price * 1.2} €
+                  {product.beforeSalePrice &&
+                    product.beforeSalePrice > 0 &&
+                    product.beforeSalePrice}{" "}
+                  €
                 </p>
               </del>
               <div className="ml-auto">
