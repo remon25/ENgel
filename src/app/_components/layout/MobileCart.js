@@ -32,7 +32,7 @@ export default function MobileSidebar() {
   }, [showMobileSidebar]);
 
   useEffect(() => {
-    if (pathname.startsWith("/dashboard")) {
+    if (!pathname.startsWith("/dashboard")) {
       setShowCartButton(true);
     } else {
       setShowMobileSidebar(false);
