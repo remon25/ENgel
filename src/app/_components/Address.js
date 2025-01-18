@@ -10,6 +10,19 @@ export default function Address({ setAddressProp, setInsideGermany }) {
   const [isInsideGermany, setIsInsideGermany] = useState(null); // New state
   const debounceTimer = useRef(null);
 
+  // List of country names for Germany in different languages
+  const germanyNames = {
+    en: "Germany",
+    de: "Deutschland",
+    fr: "Allemagne",
+    ar: "ألمانيا",
+    it: "Germania",
+    es: "Alemania",
+    nl: "Duitsland",
+    pt: "Alemanha",
+    ru: "Германия",
+  };
+
   const handleInputChange = (e) => {
     const value = e.target.value;
     setQuery(value);
@@ -44,13 +57,22 @@ export default function Address({ setAddressProp, setInsideGermany }) {
     setQuery(suggestion.formatted); // Use formatted address
     setAddressProp("streetAdress", suggestion.formatted);
 
-    // Check if the address is in Germany
-    if (suggestion.country === "Germany") {
+    // Check if the address is in Germany by checking the country name in multiple languages
+    const country = suggestion.country;
+    const isGermany = Object.values(germanyNames).includes(country);
+
+    if (isGermany) {
       setIsInsideGermany(true);
       setInsideGermany(true);
     } else {
       setIsInsideGermany(false);
       setInsideGermany(false);
+    }
+
+    // Handle different languages (e.g., German addresses)
+    if (suggestion.language && suggestion.language !== "en") {
+      console.log("Address suggestion is in a non-English language:", suggestion.language);
+      // You can add more logic here for other languages if needed
     }
 
     setSuggestions([]);

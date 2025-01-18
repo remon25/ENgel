@@ -14,12 +14,11 @@ export default function CartProduct({
       className={`grid grid-cols-2 place-items-center md:flex md:items-center gap-2 border-b py-4 ${
         disabled ? "cursor-not-allowed pointer-events-none" : ""
       }`}
-
     >
-      {quantity > 1 && (
-        <div className="flex items-center text-[12px] font-semibold">{quantity} x</div>
-      )}
-      <div className="w-[50px]">
+      <div className="flex items-center w-[50px]">
+        {quantity > 1 && (
+          <span className="text-[10px] font-semibold tracking-[2px]">{quantity + "x"}</span>
+        )}
         <Image
           width={50}
           height={50}

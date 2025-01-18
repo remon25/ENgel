@@ -45,7 +45,6 @@ export default function CartPage() {
   const [insideGermany, setInsideGermany] = useState(false);
 
   let totalPrice = 0;
-  console.log(insideGermany, "inside germany ???");
   for (const p of cartProducts) {
     totalPrice += cartProductPrice(p) * (p?.quantity || 1);
   }
