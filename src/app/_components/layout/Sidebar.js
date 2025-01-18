@@ -146,7 +146,7 @@ export default function Sidebar() {
       className={`sidebar ${
         showSidebarContext ? "translate-x-0" : "translate-x-full"
       } fixed top-0 bottom-0 right-0 h-screen w-[330px] z-[12] px-6 ${
-        isScrolled ? "pt-1" : "pt-[11rem]"
+        isScrolled ? "pt-1" : "pt-[5rem] md:pt-[11rem]"
       } flex flex-col bg-white transition-all`}
     >
       <div className="text-center">
