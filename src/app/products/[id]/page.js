@@ -48,7 +48,6 @@ export default function ProductPage() {
     fetchProduct();
   }, [id]);
 
-  console.log(category);
 
   const handleAddToCart = () => {
     addToCart(product, selectedSize, [], quantity); // You can pass size and extras as needed
@@ -69,9 +68,6 @@ export default function ProductPage() {
     moreImages = [],
     description,
     sizes,
-    stock,
-    extraOptions,
-    code,
   } = product;
 
   const increaseQuantity = () => setQuantity(quantity + 1);

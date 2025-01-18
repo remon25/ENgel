@@ -199,8 +199,8 @@ export default function Sidebar() {
           {(reachMinimumOreder ||
             !profileData?.city ||
             orderType == "pickup") && (
-            <Link href={"/cart"}>
-              <button type="button" className="mt-6 sidebar_button button">
+            <Link className="mb-20" href={"/cart"}>
+              <button onClick={() => setShowSidebarContext(false)} type="button" className="mt-6 sidebar_button button">
                 Zur Kasse gehen
               </button>
             </Link>
