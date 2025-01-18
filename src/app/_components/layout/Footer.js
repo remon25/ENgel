@@ -43,7 +43,7 @@ export default function Footer() {
               <div className="text-md uppercase text-white font-bold">
                 Unterstützung
               </div>
-              <Link href={"/"} className="my-3 block">
+              <Link href={"/terms-and-conditions"} className="my-3 block">
                 AGB
               </Link>
               <Link href={"/privacy-policy"} className="my-3 block">
