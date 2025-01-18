@@ -3,7 +3,6 @@ import Facebook from "../icons/Facebook";
 import Instagram from "../icons/Instagram";
 import Whatsapp from "../icons/Whatsapp";
 import Link from "next/link";
-import OpenHours from "./OpenHours";
 
 export default function Footer() {
   return (
