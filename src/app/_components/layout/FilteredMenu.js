@@ -106,6 +106,8 @@ export default function FilteredMenu({ menu, categories }) {
     nav.scrollLeft += direction === "right" ? scrollAmount : -scrollAmount;
   };
 
+  console.log(categories,"filter mmm")
+
   useEffect(() => {
     const handleScroll = () => {
       if (searchQuery.trim() !== "") return;
@@ -293,6 +295,7 @@ export default function FilteredMenu({ menu, categories }) {
           <MenuItem
             key={`${item._id}-${index}`}
             menuItemInfo={item}
+            category={categories.find((cat) => cat._id === item.category).name}
             isOffersCategory={false}
           />
         ))}

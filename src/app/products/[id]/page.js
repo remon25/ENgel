@@ -21,31 +21,30 @@ export default function ProductPage() {
 
   useEffect(() => {
     if (!id) return;
-
-    async function fetchProduct() {
+  
+    async function fetchData() {
       try {
-        const response = await fetch(`/api/products?_id=${id}`);
-        if (!response.ok)
-          throw new Error("Produkt konnte nicht geladen werden");
-
-        const data = await response.json();
-        setProduct(data);
-        setMainImage(data.bannerImage); // Set the main image initially
-        setSelectedSize(data.sizes?.[0] || null); // Set the first size as default
-
-        // Fetch category based on category ID from product
-        const categoryResponse = await fetch(`/api/categories`);
-        if (categoryResponse.ok) {
-          const categoryData = await categoryResponse.json();
-
-          setCategory(categoryData.find((cat) => cat._id === data.category));
-        }
+        const [productResponse, categoryResponse] = await Promise.all([
+          fetch(`/api/products?_id=${id}`),
+          fetch(`/api/categories`),
+        ]);
+  
+        if (!productResponse.ok || !categoryResponse.ok)
+          throw new Error("Failed to load data");
+  
+        const productData = await productResponse.json();
+        const categoryData = await categoryResponse.json();
+  
+        setProduct(productData);
+        setMainImage(productData.bannerImage);
+        setSelectedSize(productData.sizes?.[0] || null);
+        setCategory(categoryData.find((cat) => cat._id === productData.category));
       } catch (error) {
-        console.error("Fehler beim Laden des Produkts:", error);
+        console.error("Error loading data:", error);
       }
     }
-
-    fetchProduct();
+  
+    fetchData();
   }, [id]);
 
 

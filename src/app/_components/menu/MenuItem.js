@@ -6,10 +6,9 @@ import Image from "next/image";
 import Cart from "../icons/Cart";
 import Link from "next/link";
 
-export default function MenuItem({ menuItemInfo, isOffersCategory }) {
+export default function MenuItem({ menuItemInfo, category }) {
   const {
     name,
-    description,
     bannerImage,
     price,
     beforeSalePrice,
@@ -21,7 +20,6 @@ export default function MenuItem({ menuItemInfo, isOffersCategory }) {
   const [selectedExtras, setSelectedExtras] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const { addToCart } = useContext(cartContext);
-  const [category, setCategory] = useState(null);
 
   function handlePopupToggle() {
     if (!showPopup) {
@@ -60,24 +58,6 @@ export default function MenuItem({ menuItemInfo, isOffersCategory }) {
     }
   }
 
-  useEffect(() => {
-    async function fetchProduct() {
-      // Fetch category based on category ID from product
-      try {
-        const categoryResponse = await fetch(`/api/categories`);
-        if (categoryResponse.ok) {
-          const categoryData = await categoryResponse.json();
-
-          setCategory(
-            categoryData.find((cat) => cat._id === menuItemInfo.category).name
-          );
-        }
-      } catch (error) {
-        console.error("Fehler beim Laden des Produkts:", error);
-      }
-    }
-    fetchProduct();
-  }, [menuItemInfo.category]);
 
   let selectedPrice = price;
 
