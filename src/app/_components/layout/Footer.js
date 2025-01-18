@@ -18,10 +18,13 @@ export default function Footer() {
               <div className="text-md uppercase text-white font-bold">
                 Ressourcen
               </div>
+              <div className="flex flex-col gap-y-1 my-3">
               <Link href={"/"}>Startseite</Link>
               <Link href={"/products/all"}>Alle Produkte</Link>
               <Link href={"/about"}>Über uns</Link>
               <Link href={"/contact"}>Kontakt</Link>
+              </div>
+            
             </div>
             <div className="p-5 text-neutral-100">
               <div className="text-md uppercase text-white font-bold">
