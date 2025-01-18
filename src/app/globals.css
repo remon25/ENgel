@@ -136,6 +136,9 @@ div.tabs .active {
   }
 }
 @media (max-width: 992px) {
+  #cartButton{
+    display: none !important;
+  }
   aside {
     /* display: none !important; */
   }

@@ -51,6 +51,7 @@ export default function RootLayout({ children }) {
             <Toaster />
             <Header />
             <Sidebar />
+            <MobileCart />
             {children}
           </main>
           <Footer />

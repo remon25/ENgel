@@ -110,7 +110,7 @@ export default function Header() {
           Nur heute! Genießen Sie kostenlosen Versand auf alle Bestellungen! 🎉
         </div>
       )} */}
-      <div className="flex items-center md:hidden justify-between px-8 py-2">
+      <div className="flex items-center lg:hidden justify-between px-8 py-2">
         <Link className="text-primary font-semibold text-2xl" href={"/"}>
           <Image src="/logo.png" alt="ENGEL logo" width={70} height={70} />
         </Link>
@@ -146,7 +146,7 @@ export default function Header() {
                 return !prev;
               });
             }}
-            className="relative"
+            className="relative block"
           >
             {cartProducts.length > 0 && (
               <span className="absolute top-[-10px] right-[-10px] bg-[#d4af5e] w-5 h-5 flex items-center justify-center rounded-full text-sm">
@@ -161,7 +161,7 @@ export default function Header() {
       {mobileNavOpen && (
         <div
           onClick={() => setMobileNavOpen(false)}
-          className="md:hidden top-0 p-4 bg-gray-950 text-white rounded-lg mt-2 flex flex-col gap-2 text-center"
+          className="lg:hidden top-0 p-4 bg-gray-950 text-white rounded-lg mt-2 flex flex-col gap-2 text-center"
         >
           <Link href={"/"}>Startseite</Link>
           <Link href={"/products/all"}>Alle Produkte</Link>
@@ -197,7 +197,7 @@ export default function Header() {
           )}{" "}
         </div>
       )}
-      <div className="hidden md:flex items-center justify-between px-8 py-6">
+      <div className="hidden lg:flex items-center justify-between px-8 py-6">
         <nav className="flex items-center gap-8 text-white font-semibold">
           <Link className="text-primary font-semibold text-2xl" href={"/"}>
             <Image src="/logo.png" alt="ENGEL logo" width={70} height={70} />
@@ -243,7 +243,7 @@ export default function Header() {
               e.preventDefault();
               setShowSidebarContext((prev) => !prev); // Toggle sidebar
             }}
-            className="relative"
+            className="relative block"
           >
             {cartProducts.length > 0 && (
               <span className="absolute top-[-10px] right-[-10px] bg-[#d4af5e] w-5 h-5 flex items-center justify-center rounded-full text-sm">

@@ -20,32 +20,32 @@ export default function ProductPage() {
   const { addToCart } = useContext(cartContext);
 
   useEffect(() => {
-    if (!id) return;
-  
-    async function fetchData() {
-      try {
-        const [productResponse, categoryResponse] = await Promise.all([
-          fetch(`/api/products?_id=${id}`),
-          fetch(`/api/categories`),
-        ]);
-  
-        if (!productResponse.ok || !categoryResponse.ok)
-          throw new Error("Failed to load data");
-  
-        const productData = await productResponse.json();
-        const categoryData = await categoryResponse.json();
-  
-        setProduct(productData);
-        setMainImage(productData.bannerImage);
-        setSelectedSize(productData.sizes?.[0] || null);
-        setCategory(categoryData.find((cat) => cat._id === productData.category));
-      } catch (error) {
-        console.error("Error loading data:", error);
-      }
+  if (!id) return;
+
+  async function fetchData() {
+    try {
+      const [productResponse, categoryResponse] = await Promise.all([
+        fetch(`/api/products?_id=${id}`),
+        fetch(`/api/categories`),
+      ]);
+
+      if (!productResponse.ok || !categoryResponse.ok)
+        throw new Error("Failed to load data");
+
+      const productData = await productResponse.json();
+      const categoryData = await categoryResponse.json();
+
+      setProduct(productData);
+      setMainImage(productData.bannerImage);
+      setSelectedSize(productData.sizes?.[0] || null);
+      setCategory(categoryData.find((cat) => cat._id === productData.category));
+    } catch (error) {
+      console.error("Error loading data:", error);
     }
-  
-    fetchData();
-  }, [id]);
+  }
+
+  fetchData();
+}, [id]);
 
 
   const handleAddToCart = () => {

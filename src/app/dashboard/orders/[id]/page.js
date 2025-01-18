@@ -1,8 +1,6 @@
 "use client";
 
 import { cartContext } from "@/app/_components/AppContext";
-import Delivery from "@/app/_components/icons/Delivery";
-import Pickup from "@/app/_components/icons/Pickup";
 import AddressInputs from "@/app/_components/layout/AdressInputs";
 import SectionHeader from "@/app/_components/layout/SectionHeader";
 import Spinner from "@/app/_components/layout/Spinner";
