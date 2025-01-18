@@ -10,11 +10,10 @@ import Xmark from "../icons/Xmark";
 import ShoppingCart from "../icons/Cart";
 
 export default function MobileSidebar() {
-  const { cartProducts, removeCartProduct, orderType, setOrderType } =
+  const { cartProducts, removeCartProduct, totalCost } =
     useContext(cartContext);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [showCartButton, setShowCartButton] = useState(true);
-  const [myDeliveryPrice, setMyDeliveryPrice] = useState(undefined);
 
   let totalPrice = 0;
 
@@ -87,16 +86,8 @@ export default function MobileSidebar() {
                   ))}
                 <div className="py-1 flex justify-end items-center">
                   <div className="text-gray-500">Zwischensumme : &nbsp;</div>
-                  <div className="font-semibold">{totalPrice} &euro;</div>
+                  <div className="font-semibold">{totalCost} &euro;</div>
                 </div>
-                {myDeliveryPrice !== undefined && (
-                  <>
-                    <div className="py-1 flex justify-end items-center">
-                      <div className="text-gray-500">Gesamt : &nbsp;</div>
-                      <div className="font-semibold">{totalPrice} €</div>
-                    </div>
-                  </>
-                )}
               </div>
               <Link href={"/cart"}>
                 <button type="button" className="mt-6 sidebar_button button">

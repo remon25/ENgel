@@ -16,12 +16,13 @@ export default function CartProduct({
       }`}
     >
       <div className="flex items-center w-[50px]">
-        {quantity > 1 && (
-          <span className="text-[10px] font-semibold tracking-[2px]">{quantity + "x"}</span>
-        )}
+        <span className="text-[10px] font-semibold tracking-[2px]">
+          {quantity + "x"}
+        </span>
+
         <Image
-          width={50}
-          height={50}
+          width={30}
+          height={30}
           src={product.bannerImage || "/default-menu.png"}
           alt={product.name}
         />
