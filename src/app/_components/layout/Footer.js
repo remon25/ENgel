@@ -52,7 +52,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="bg-gray-500 pt-2">
+        <div className="bg-gray-500 pt-2 pb-16">
           <div
             className="flex pb-5 px-3 m-auto pt-5 border-t text-gray-800 text-sm flex-col
       max-w-screen-lg items-center"
