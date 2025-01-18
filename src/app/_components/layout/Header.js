@@ -205,7 +205,7 @@ export default function Header() {
           <Link href={"/"}>Startseite</Link>
           <Link href={"/products/all"}>Alle Produkte</Link>
           <Link href={"/about"}>Über uns</Link>
-          <Link href={"tel:15216722182"}>Kontakt</Link>
+          <Link href={"/contact"}>Kontakt</Link>
         </nav>
         <nav className="flex items-center gap-4 text-white font-semibold">
           {isAdmin ? (

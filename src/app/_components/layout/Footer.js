@@ -18,14 +18,10 @@ export default function Footer() {
               <div className="text-md uppercase text-white font-bold">
                 Ressourcen
               </div>
-              <a className="my-3 block" href="/#">
-                Vorgestellte Produkte
-                <span className="text-teal-600 text-xs p-1"></span>
-              </a>
-              <a className="my-3 block" href="/#">
-                Alle Produkte{" "}
-                <span className="text-teal-600 text-xs p-1"></span>
-              </a>
+              <Link href={"/"}>Startseite</Link>
+              <Link href={"/products/all"}>Alle Produkte</Link>
+              <Link href={"/about"}>Über uns</Link>
+              <Link href={"/contact"}>Kontakt</Link>
             </div>
             <div className="p-5 text-neutral-100">
               <div className="text-md uppercase text-white font-bold">
