@@ -46,9 +46,10 @@ export default function Footer() {
               <Link href={"/"} className="my-3 block">
                 AGB
               </Link>
-              <Link href={"/"} className="my-3 block">
+              <Link href={"/privacy-policy"} className="my-3 block">
                 Datenschutzerklärung
               </Link>
+              <span className="text-xs">Steuernummer: 47/600/02122</span>
             </div>
           </div>
         </div>

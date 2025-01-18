@@ -100,7 +100,6 @@ export default function Header() {
     fetchDeliveryPrices();
   }, []);
 
-  
   return (
     <header
       id="header"
@@ -129,7 +128,12 @@ export default function Header() {
           )}
           <button
             className="p-1 border"
-            onClick={() => setMobileNavOpen((prev) => !prev)}
+            onClick={() => {
+              setMobileNavOpen((prev) => {
+                if (!prev) setShowSidebarContext(false);
+                return !prev;
+              });
+            }}
           >
             <Bars2 />
           </button>
@@ -137,7 +141,10 @@ export default function Header() {
             id="cartButton"
             onClick={(e) => {
               e.preventDefault();
-              setShowSidebarContext((prev) => !prev); // Toggle sidebar
+              setShowSidebarContext((prev) => {
+                if (!prev) setMobileNavOpen(false); // Close mobile nav if opening sidebar
+                return !prev;
+              });
             }}
             className="relative"
           >

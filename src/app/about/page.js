@@ -18,7 +18,8 @@ export default function page() {
               {/* Side Image 2 */}
               <img
                 className="absolute z-10 lg:top-[12rem] sm:top-[11rem] top-[5rem] sm:-left-[3rem] -left-[2rem] lg:w-[8rem] lg:h-[8rem] sm:w-[6rem] sm:h-[6rem] w-[3rem] h-[3rem] rounded-full"
-src="/about-2.jpeg"                alt="Side Image 2"
+                src="/about-2.jpeg"
+                alt="Side Image 2"
               />
               {/* Side Image 3 */}
               <img
@@ -48,6 +49,9 @@ src="/about-2.jpeg"                alt="Side Image 2"
                 besondere Anlässe – Engel GmbH bringt mit seinen einzigartigen
                 Düften einen Hauch von Luxus in Ihr Leben. Vertrauen Sie auf
                 unsere Expertise und erleben Sie die Welt der erlesenen Parfüms.
+                Das Unternehmen wird von Suleman Abo Shakha geleitet, dessen
+                Vision und Leidenschaft für exquisite Düfte das Herzstück
+                unseres Erfolgs bilden.
               </p>
               <Link href="/contact">
                 <button className="lg:mt-10 mt-6 lg:px-6 px-4 lg:py-4 py-2 bg-[#d4af5e] rounded-sm lg:text-xl text-lg text-white font-semibold">
