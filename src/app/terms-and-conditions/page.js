@@ -11,7 +11,7 @@ export default function page() {
             <strong>Geltungsbereich</strong>
           </p>
           <p>
-            1.1. Diese Allgemeinen Geschäftsbedingungen (im Folgenden "AGB")
+            1.1. Diese Allgemeinen Geschäftsbedingungen (im Folgenden &quot;AGB&quot;)
             gelten für alle Bestellungen und Verträge, die über unseren
             Onlineshop getätigt werden.
           </p>
