@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import Spinner from "@/app/_components/layout/Spinner";
 import { cartContext } from "@/app/_components/AppContext";
 import Link from "next/link";
+import MenuItem from "@/app/_components/menu/MenuItem";
 
 export default function ProductPage() {
   const [mainImage, setMainImage] = useState(null);
@@ -14,39 +15,45 @@ export default function ProductPage() {
   const [category, setCategory] = useState(null); // State to store category data
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
 
   const { id } = useParams();
 
   const { addToCart } = useContext(cartContext);
 
   useEffect(() => {
-  if (!id) return;
+    if (!id) return;
 
-  async function fetchData() {
-    try {
-      const [productResponse, categoryResponse] = await Promise.all([
-        fetch(`/api/products?_id=${id}`),
-        fetch(`/api/categories`),
-      ]);
+    async function fetchData() {
+      try {
+        const [productResponse, categoryResponse, relatedResponse] =
+          await Promise.all([
+            fetch(`/api/products?_id=${id}`),
+            fetch(`/api/categories`),
+            fetch(`/api/products?_id=${id}&related=true`),
+          ]);
 
-      if (!productResponse.ok || !categoryResponse.ok)
-        throw new Error("Failed to load data");
+        if (!productResponse.ok || !categoryResponse.ok || !relatedResponse.ok)
+          throw new Error("Failed to load data");
 
-      const productData = await productResponse.json();
-      const categoryData = await categoryResponse.json();
+        const productData = await productResponse.json();
+        const categoryData = await categoryResponse.json();
+        const relatedData = await relatedResponse.json();
 
-      setProduct(productData);
-      setMainImage(productData.bannerImage);
-      setSelectedSize(productData.sizes?.[0] || null);
-      setCategory(categoryData.find((cat) => cat._id === productData.category));
-    } catch (error) {
-      console.error("Error loading data:", error);
+        setProduct(productData);
+        setMainImage(productData.bannerImage);
+        setSelectedSize(productData.sizes?.[0] || null);
+        setCategory(
+          categoryData.find((cat) => cat._id === productData.category)
+        );
+        setRelatedProducts(relatedData);
+      } catch (error) {
+        console.error("Error loading data:", error);
+      }
     }
-  }
 
-  fetchData();
-}, [id]);
-
+    fetchData();
+  }, [id]);
 
   const handleAddToCart = () => {
     addToCart(product, selectedSize, [], quantity); // You can pass size and extras as needed
@@ -60,14 +67,10 @@ export default function ProductPage() {
     );
   }
 
+  console.log(relatedProducts);
+
   // Destructure only after product is available
-  const {
-    name,
-    bannerImage,
-    moreImages = [],
-    description,
-    sizes,
-  } = product;
+  const { name, bannerImage, moreImages = [], description, sizes } = product;
 
   const increaseQuantity = () => setQuantity(quantity + 1);
   const decreaseQuantity = () => quantity > 1 && setQuantity(quantity - 1);
@@ -117,7 +120,9 @@ export default function ProductPage() {
               <span className="text-2xl font-bold mr-2">{product.price}€</span>
               {product.price && (
                 <span className="text-gray-500 line-through">
-                  {product.beforeSalePrice && product.beforeSalePrice > 0 && product.beforeSalePrice + "€"}
+                  {product.beforeSalePrice &&
+                    product.beforeSalePrice > 0 &&
+                    product.beforeSalePrice + "€"}
                 </span>
               )}
             </div>
@@ -198,6 +203,24 @@ export default function ProductPage() {
           </div>
         </div>
       </div>
+
+      {relatedProducts.length > 0 && (
+        <div className="mt-16 mb-20">
+          <h2 className="text-[#222] text-left font-bold text-2xl md:text-2xl mb-2 mt-14 p-5 max-w-6xl mx-auto">
+            Ähnliche Produkte
+          </h2>
+          <div className="w-fit mx-auto grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
+            {relatedProducts.map((relatedProduct, index) => (
+              <MenuItem
+                key={`${relatedProduct._id}-${index}`}
+                menuItemInfo={relatedProduct}
+                category={category.name}
+                isOffersCategory={false}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
