@@ -47,7 +47,7 @@ export default function FilteredMenu({ menu, categories }) {
           <div className="p-4 flex items-center justify-around border-t-gray-300 border-b-gray-300 border-[1px] rounded-[5px]">
             {categories.map((c) => (
               <Link
-                className="text-sm sm:text-lg font-semibold"
+                className="text-[12px] sm:text-lg font-semibold"
                 key={c._id}
                 href={`/categories/${c._id}`}
               >

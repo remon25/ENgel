@@ -1,8 +1,10 @@
 "use client";
 
 import FilteredMenu from "@/app/_components/layout/FilteredMenu";
+import SearchBar from "@/app/_components/layout/SearchBar";
 import Spinner from "@/app/_components/layout/Spinner";
 import MenuItem from "@/app/_components/menu/MenuItem";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -10,6 +12,7 @@ export default function CategoryPage() {
   const [products, setProducts] = useState(null); // Null indicates loading state
   const [error, setError] = useState(false); // Track if there's an error
   const [categories, setCategories] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const { id } = useParams();
 
   useEffect(() => {
@@ -57,7 +60,11 @@ export default function CategoryPage() {
 
     fetchData();
   }, []);
-  console.log(categories);
+
+  const filteredMenu = products?.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   // Show spinner while loading
   if (products === null && !error) {
     return (
@@ -82,16 +89,40 @@ export default function CategoryPage() {
         {products[0]?.category?.name} Produkte
       </h1>
 
-      {/* {products.map((item, index) => (
+      <div className="sticky top-0 z-[11] bg-white max-w-6xl mx-auto">
+        <div className="flex items-center">
+          <SearchBar value={searchQuery} onChange={setSearchQuery} />
+        </div>
+        <div className="w-full p-4 mx-auto">
+          <div className="p-4 flex items-center justify-around border-t-gray-300 border-b-gray-300 border-[1px] rounded-[5px]">
+            {categories.map((c) => (
+              <Link
+                className="text-[12px] sm:text-lg font-semibold"
+                key={c._id}
+                href={`/categories/${c._id}`}
+              >
+                {c.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <section
+        id="Projects"
+        className="menu-items-section w-fit mx-auto grid grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5"
+      >
+        {filteredMenu.map((item, index) => (
           <MenuItem
             key={`${item._id}-${index}`}
             menuItemInfo={item}
             category={item.category.name}
             isOffersCategory={false}
           />
-        ))} */}
+        ))}
+      </section>
 
-      <FilteredMenu menu={products} categories={categories} />
+      {/* <FilteredMenu menu={products} categories={categories} /> */}
     </>
   );
 }
