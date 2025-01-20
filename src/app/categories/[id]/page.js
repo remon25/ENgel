@@ -93,19 +93,6 @@ export default function CategoryPage() {
         <div className="flex items-center">
           <SearchBar value={searchQuery} onChange={setSearchQuery} />
         </div>
-        <div className="w-full p-4 mx-auto">
-          <div className="p-4 flex items-center justify-around border-t-gray-300 border-b-gray-300 border-[1px] rounded-[5px]">
-            {categories.map((c) => (
-              <Link
-                className="text-[12px] sm:text-lg font-semibold"
-                key={c._id}
-                href={`/categories/${c._id}`}
-              >
-                {c.name}
-              </Link>
-            ))}
-          </div>
-        </div>
       </div>
 
       <section
