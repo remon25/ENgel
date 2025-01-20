@@ -72,31 +72,47 @@ export async function GET(req) {
     const _id = url.searchParams.get("_id");
     const getRelated = url.searchParams.get("related");
 
+    const categoryId = url.searchParams.get("category");
+
     if (_id && getRelated) {
       // Fetch the main product first to get its category
       const mainProduct = await ProductItem.findById(_id);
       if (!mainProduct) {
-        return new Response(JSON.stringify({ error: "Product not found" }), { status: 404 });
+        return new Response(JSON.stringify({ error: "Product not found" }), {
+          status: 404,
+        });
       }
 
       // Fetch 4 random related products from the same category, excluding the current product
       const relatedProducts = await ProductItem.aggregate([
-        { 
-          $match: { 
+        {
+          $match: {
             category: new mongoose.Types.ObjectId(mainProduct.category),
-            _id: { $ne: new mongoose.Types.ObjectId(_id) }
-          }
+            _id: { $ne: new mongoose.Types.ObjectId(_id) },
+          },
         },
-        { $sample: { size: 4 } }
+        { $sample: { size: 4 } },
       ]);
 
       return new Response(JSON.stringify(relatedProducts), { status: 200 });
     } else if (_id) {
       const productItem = await ProductItem.findById(_id);
       if (!productItem) {
-        return new Response(JSON.stringify({ error: "Product not found" }), { status: 404 });
+        return new Response(JSON.stringify({ error: "Product not found" }), {
+          status: 404,
+        });
       }
       return new Response(JSON.stringify(productItem), { status: 200 });
+    } else if (categoryId) {
+      if (categoryId) {
+        const products = await ProductItem.find({
+          category: categoryId,
+        }).populate("category");
+        return new Response(JSON.stringify(products), { status: 200 });
+      } else {
+        const products = await ProductItem.find().populate("category");
+        return new Response(JSON.stringify(products), { status: 200 });
+      }
     } else {
       const productItems = await ProductItem.find();
       return new Response(JSON.stringify(productItems), { status: 200 });
@@ -108,7 +124,6 @@ export async function GET(req) {
     );
   }
 }
-
 
 export async function DELETE(req) {
   try {

@@ -67,7 +67,6 @@ export default function ProductPage() {
     );
   }
 
-  console.log(relatedProducts);
 
   // Destructure only after product is available
   const { name, bannerImage, moreImages = [], description, sizes } = product;

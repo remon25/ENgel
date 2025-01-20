@@ -136,7 +136,7 @@ div.tabs .active {
   }
 }
 @media (max-width: 992px) {
-  #cartButton{
+  #cartButton {
     display: none !important;
   }
   aside {
@@ -197,6 +197,39 @@ div.tabs .active {
   .menu-item-image .image-holder {
     width: 70px !important;
     height: 70px !important;
+  }
+  .menu-items-section {
+    width: 100% !important;
+    row-gap: 3rem !important;
+    column-gap: 0.75rem !important;
+    padding: 10px;
+    overflow: hidden !important;
+  }
+  .menu-items-container {
+    width: 100% !important;
+  }
+  .menu-items-container img {
+    width: 100% !important;
+    height: 10rem !important;
+  }
+  .menu-item-name {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    margin-top: 0.5rem;
+  }
+  .menu-item-icon {
+    display: none !important;
+  }
+  .menu-item-details {
+    width: 100% !important;
+    height: 155px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .menu-item-link {
+    display: flex !important;
+    flex-direction: column;
   }
 }
 

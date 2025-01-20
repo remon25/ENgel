@@ -4,7 +4,6 @@ import { useProfile } from "@/app/_components/useProfile";
 import { useEffect, useState } from "react";
 import DeleteButton from "@/app/_components/DeleteButton";
 import withAdminAuth from "@/app/_components/withAdminAuth";
-import AdminTabs from "@/app/_components/layout/AdminTabs";
 import Spinner from "@/app/_components/layout/Spinner";
 
 function CategoriesPage() {

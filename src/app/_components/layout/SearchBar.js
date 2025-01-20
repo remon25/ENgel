@@ -1,8 +1,8 @@
 export default function SearchBar({ value, onChange }) {
   return (
-    <div className="w-full pt-2 px-4 pb-6 relative mx-auto text-gray-600">
+    <div className="w-full pt-2 px-4  relative mx-auto text-gray-600">
       <input
-        className="w-full border-2 border-gray-300 bg-white h-10 px-3  rounded-lg text-xs focus:outline-none"
+        className="w-full border-2 border-gray-300 bg-white h-10 pl-3 pr-[1.85rem]  rounded-lg text-xs focus:outline-none"
         type="search"
         name="search"
         placeholder="Search"
