@@ -16,6 +16,7 @@ export default function ProductPage() {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const { id } = useParams();
 
@@ -42,7 +43,6 @@ export default function ProductPage() {
 
         setProduct(productData);
         setMainImage(productData.bannerImage);
-        setSelectedSize(productData.sizes?.[0] || null);
         setCategory(
           categoryData.find((cat) => cat._id === productData.category)
         );
@@ -67,7 +67,6 @@ export default function ProductPage() {
     );
   }
 
-
   // Destructure only after product is available
   const { name, bannerImage, moreImages = [], description, sizes } = product;
 
@@ -75,8 +74,7 @@ export default function ProductPage() {
   const decreaseQuantity = () => quantity > 1 && setQuantity(quantity - 1);
 
   const changeImage = (newImage) => setMainImage(newImage);
-
-  return (
+   return (
     <div className="bg-gray-100">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-wrap -mx-4">
@@ -116,11 +114,13 @@ export default function ProductPage() {
             </p>{" "}
             {/* Display category name */}
             <div className="mb-4">
-              <span className="text-2xl font-bold mr-2">{product.price}€</span>
+              <span className="text-2xl font-bold mr-2">
+                {totalPrice > 0 ? totalPrice : product.price}€
+              </span>
               {product.price && (
                 <span className="text-gray-500 line-through">
                   {product.beforeSalePrice &&
-                    product.beforeSalePrice > 0 &&
+                    product.beforeSalePrice > 0 && (totalPrice === 0)  && 
                     product.beforeSalePrice + "€"}
                 </span>
               )}
@@ -148,7 +148,10 @@ export default function ProductPage() {
                       .map((size) => (
                         <button
                           key={size._id}
-                          onClick={() => setSelectedSize(size)}
+                          onClick={() => {
+                            setSelectedSize(size);
+                            setTotalPrice(product.price + size.price);
+                          }}
                           className={`border px-3 py-1 cursor-pointer ${
                             selectedSize?._id === size._id
                               ? "bg-blue-500 text-white"
@@ -158,7 +161,7 @@ export default function ProductPage() {
                           <span className="font-medium uppercase">
                             {size.name}{" "}
                           </span>
-                          {size.price > 0 ? "(+" + size.price + "€" + ")" : ""}
+                          {/* {size.price > 0 ? "(+" + size.price + "€" + ")" : ""} */}
                         </button>
                       ))}
                   </div>
@@ -208,7 +211,7 @@ export default function ProductPage() {
           <h2 className="text-[#222] text-left font-bold text-2xl md:text-2xl mb-2 mt-14 p-5 max-w-6xl mx-auto">
             Ähnliche Produkte
           </h2>
-          <div className="w-fit mx-auto grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
+          <div className="w-fit mx-auto grid grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-6 mt-10 mb-5">
             {relatedProducts.map((relatedProduct, index) => (
               <MenuItem
                 key={`${relatedProduct._id}-${index}`}

@@ -43,15 +43,14 @@ export default function CategoryPage() {
     async function fetchData() {
       try {
         const response = await fetch(`/api/categories`);
-        if (!response.ok) throw new Error("Failed to load data");
+        if (!response.ok) {
+          throw new Error("Failed to load data");
+          setError(true);
+        }
 
         const data = await response.json();
 
-        if (!data || data.length === 0) {
-          setError(true); // No products found for the category
-        } else {
-          setCategories(data);
-        }
+        setCategories(data);
       } catch (error) {
         console.error("Error loading data:", error);
         setError(true); // Set error state if fetching fails

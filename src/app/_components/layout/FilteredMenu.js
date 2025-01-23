@@ -24,7 +24,7 @@ export default function FilteredMenu({ menu, categories }) {
   return (
     <section className="home-menu">
       {/* Sticky SearchBar */}
-      <div className="sticky top-0 z-[11] bg-white max-w-6xl mx-auto">
+      <div className="z-[11] bg-white max-w-6xl mx-auto">
         <div className="flex items-center">
           <SearchBar value={searchQuery} onChange={setSearchQuery} />
           <div className="w-full pt-2 px-4  relative mx-auto text-gray-600">

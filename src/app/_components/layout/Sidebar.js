@@ -130,9 +130,7 @@ export default function Sidebar() {
         id="sidebar"
         className={`sidebar ${
           showSidebarContext ? "translate-x-0" : "translate-x-full"
-        } fixed top-0 bottom-0 right-0 h-screen w-[330px] z-[12] px-6 ${
-          isScrolled ? "pt-1" : "pt-20"
-        } flex flex-col justify-center items-center bg-white transition-all`}
+        } fixed top-0 bottom-0 right-0 h-screen w-[330px] z-[12] px-6 pt-20 flex flex-col justify-center items-center bg-white transition-all`}
       >
         <Spinner />
       </aside>
@@ -145,9 +143,7 @@ export default function Sidebar() {
       onClick={handleClickInside}
       className={`sidebar ${
         showSidebarContext ? "translate-x-0" : "translate-x-full"
-      } fixed top-0 bottom-0 right-0 h-screen w-[330px] z-[12] px-6 ${
-        isScrolled ? "pt-1" : "pt-[5rem] md:pt-[11rem]"
-      } flex flex-col bg-white transition-all`}
+      } fixed top-0 bottom-0 right-0 h-screen w-[330px] z-[12] px-6 ${"pt-[5rem] md:pt-[9rem]"} flex flex-col bg-white transition-all`}
     >
       <div className="text-center">
         <SectionHeader subtitle={"Warenkorb"} />
@@ -200,7 +196,11 @@ export default function Sidebar() {
             !profileData?.city ||
             orderType == "pickup") && (
             <Link className="mb-20" href={"/cart"}>
-              <button onClick={() => setShowSidebarContext(false)} type="button" className="mt-6 sidebar_button button">
+              <button
+                onClick={() => setShowSidebarContext(false)}
+                type="button"
+                className="mt-6 sidebar_button button"
+              >
                 Zur Kasse gehen
               </button>
             </Link>

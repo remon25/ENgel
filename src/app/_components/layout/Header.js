@@ -127,7 +127,7 @@ export default function Header() {
   return (
     <header
       id="header"
-      className="absolute top-0 left-0 bg-gray-950 right-0 w-full z-20"
+      className="fixed top-0 left-0 bg-gray-950 right-0 w-full z-20"
     >
       {/* {allDeliveryFree && (
         <div className="flex justify-center text-center items-center w-full h-[50px] text-gray-950 p-2 delivery-promo">
