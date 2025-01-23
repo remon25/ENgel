@@ -39,14 +39,14 @@ export default function page() {
                 Über uns
               </h2>
               <p className="md:text-xl sm:text-lg text-base mt-2 text-justify sm:px-2 dark:text-gray-300">
-                Engel GmbH ist ein führendes Unternehmen im Verkauf von
+                Engel ist ein führendes Unternehmen im Verkauf von
                 hochwertigen Düften, das für Exzellenz und Eleganz steht. Mit
                 einer breiten Auswahl an erstklassigen Parfüms bieten wir
                 unseren Kunden unvergleichliche Duftkreationen, die zeitlose
                 Schönheit und Stil verkörpern. Jedes unserer Produkte wird
                 sorgfältig ausgewählt, um höchste Qualität und
                 Kundenzufriedenheit zu gewährleisten. Ob für den Alltag oder
-                besondere Anlässe – Engel GmbH bringt mit seinen einzigartigen
+                besondere Anlässe – Engel bringt mit seinen einzigartigen
                 Düften einen Hauch von Luxus in Ihr Leben. Vertrauen Sie auf
                 unsere Expertise und erleben Sie die Welt der erlesenen Parfüms.
                 Das Unternehmen wird von Suleman Abo Shakha geleitet, dessen
