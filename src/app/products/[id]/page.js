@@ -211,7 +211,7 @@ export default function ProductPage() {
           <h2 className="text-[#222] text-left font-bold text-2xl md:text-2xl mb-2 mt-14 p-5 max-w-6xl mx-auto">
             Ähnliche Produkte
           </h2>
-          <div className="w-fit mx-auto grid grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-6 mt-10 mb-5">
+          <div className="w-fit mx-auto grid grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-3 sm:gap-x-6 mt-10 mb-5 p-[10px]">
             {relatedProducts.map((relatedProduct, index) => (
               <MenuItem
                 key={`${relatedProduct._id}-${index}`}
