@@ -1,5 +1,5 @@
 import Image from "next/image";
-import banner from "/public/hero.webp";
+import banner from "/public/hero.jpg";
 import { ArrowRight } from "lucide-react";
 
 export default function Hero() {
