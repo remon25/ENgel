@@ -1,8 +1,8 @@
 import Image from "next/image";
-import Facebook from "../icons/Facebook";
 import Instagram from "../icons/Instagram";
 import Whatsapp from "../icons/Whatsapp";
 import Link from "next/link";
+import Tiktok from "../icons/Tiktok";
 
 export default function Footer() {
   return (
@@ -58,13 +58,13 @@ export default function Footer() {
       max-w-screen-lg items-center"
           >
             <div className="md:flex-auto md:flex-row mt-2 flex-row flex">
-              <a href="/#" className="w-6 mx-2">
-                <Facebook className="w-6 h-6" />
+              <a href="https://www.tiktok.com/@._engel...1?_t=ZN-8tJMwwmmJXD&_r=1" className="w-6 mx-2">
+                <Tiktok className="w-6 h-6" />
               </a>
-              <a href="/#" className="w-6 mx-3">
+              <a href="https://www.instagram.com/engel.parfums/?igsh=dmRkZ29wZWxiZHZo#" className="w-6 mx-3">
                 <Instagram className="w-6 h-6" />
               </a>
-              <a href="/#" className="w-6 mx-2">
+              <a href="https://wa.me/491729377640" className="w-6 mx-2">
                 <Whatsapp className="w-6 h-6" />
               </a>
             </div>
