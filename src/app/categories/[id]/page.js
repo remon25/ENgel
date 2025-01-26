@@ -9,63 +9,64 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 export default function CategoryPage() {
-  const [products, setProducts] = useState(null); // Null indicates loading state
-  const [error, setError] = useState(false); // Track if there's an error
+  const [products, setProducts] = useState(null);
+  const [productsError, setProductsError] = useState(false);
   const [categories, setCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [category, setCategory] = useState(null);
   const { id } = useParams();
 
   useEffect(() => {
     if (!id) return;
 
-    async function fetchData() {
+    async function fetchProducts() {
       try {
         const response = await fetch(`/api/products?category=${id}`);
-        if (!response.ok) throw new Error("Failed to load data");
-
+        if (!response.ok) throw new Error("Failed to load products");
         const data = await response.json();
-
-        if (!data || data.length === 0) {
-          setError(true); // No products found for the category
-        } else {
-          setProducts(data);
-        }
+        setProducts(data);
+        setProductsError(false);
       } catch (error) {
-        console.error("Error loading data:", error);
-        setError(true); // Set error state if fetching fails
+        console.error("Error loading products:", error);
+        setProductsError(true);
       }
     }
 
-    fetchData();
+    async function fetchCategory() {
+      try {
+        const response = await fetch(`/api/categories/${id}`);
+        if (!response.ok) throw new Error("Category not found");
+        const data = await response.json();
+        setCategory(data);
+      } catch (error) {
+        console.error("Error fetching category:", error);
+      }
+    }
+
+    fetchProducts();
+    fetchCategory();
   }, [id]);
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchCategories() {
       try {
         const response = await fetch(`/api/categories`);
-        if (!response.ok) {
-          throw new Error("Failed to load data");
-          setError(true);
-        }
-
+        if (!response.ok) throw new Error("Failed to load categories");
         const data = await response.json();
-
         setCategories(data);
       } catch (error) {
-        console.error("Error loading data:", error);
-        setError(true); // Set error state if fetching fails
+        console.error("Error loading categories:", error);
       }
     }
 
-    fetchData();
+    fetchCategories();
   }, []);
 
   const filteredMenu = products?.filter((item) =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Show spinner while loading
-  if (products === null && !error) {
+  if (products === null) {
     return (
       <div className="w-full h-screen flex items-center justify-center overflow-hidden">
         <Spinner />
@@ -73,8 +74,7 @@ export default function CategoryPage() {
     );
   }
 
-  // Show "Not Found" message if there's an error or no products
-  if (error || !products || products.length === 0) {
+  if (productsError) {
     return (
       <div className="w-full h-screen flex items-center justify-center overflow-hidden">
         <h1 className="text-2xl font-bold text-red-500">Category Not Found</h1>
@@ -82,10 +82,25 @@ export default function CategoryPage() {
     );
   }
 
+  if (products.length === 0) {
+    return (
+      <>
+        <h1 className="text-[#222] text-left font-bold text-2xl md:text-2xl mb-2 mt-14 p-5 max-w-6xl mx-auto">
+          {category?.name} Produkte
+        </h1>
+        <div className="w-full h-screen flex items-center justify-center overflow-hidden">
+          <h1 className="text-2xl font-bold text-gray-500">
+            No products found in this category.
+          </h1>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <h1 className="text-[#222] text-left font-bold text-2xl md:text-2xl mb-2 mt-14 p-5 max-w-6xl mx-auto">
-        {products[0]?.category?.name} Produkte
+        {category?.name} Produkte
       </h1>
 
       <div className="sticky top-0 z-[11] bg-white max-w-6xl mx-auto">
@@ -107,8 +122,6 @@ export default function CategoryPage() {
           />
         ))}
       </section>
-
-      {/* <FilteredMenu menu={products} categories={categories} /> */}
     </>
   );
 }
