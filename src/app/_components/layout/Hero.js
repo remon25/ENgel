@@ -1,10 +1,10 @@
 import Image from "next/image";
-import banner from "/public/hero.jpg";
+import banner from "/public/hero.jpeg";
 import { ArrowRight } from "lucide-react";
 
 export default function Hero() {
   return (
-    <div className="px-7 lg:px-10 max-w-6xl mx-auto flex flex-col gap-y-10 lg:flex-row items-center gap-x-10 justify-center py-10 lg:py-14 dark:bg-gray-800">
+    <div className="px-7 lg:px-10 max-w-6xl mx-auto flex flex-col-reverse gap-y-10 lg:flex-row items-center gap-x-10 justify-center py-10 lg:py-14 dark:bg-gray-800">
       <div className="lg:w-[650px] lg:px-5 flex flex-col gap-y-5">
         <h1 className="text-4xl md:text-5xl xl:text-[50px] leading-[1.2] md:max-w-xl md:mx-auto md:text-center lg:text-left lg:mx-0 lg:max-w-full font-semibold dark:text-white">
           Erleben Sie die Essenz luxuriöser Düfte online
@@ -23,8 +23,8 @@ export default function Hero() {
           </a>
         </div>
       </div>
-      <div className="hero-image md:px-5 lg:px-0 w-full lg:w-1/2 rounded-3xl md:pt-2 lg:pt-0 relative isolate z-10">
-        <Image quality={80} className="rounded-3xl w-full" src={banner} alt="hero img" />
+      <div className="hero-image md:px-5 lg:px-0 w-full lg:w-1/2 rounded-3xl md:pt-2 lg:pt-0 relative isolate z-10 flex justify-center">
+        <Image quality={80} className="rounded-3xl w-[350px] h-[350px]" src={banner} alt="hero img" />
       </div>
     </div>
   );
