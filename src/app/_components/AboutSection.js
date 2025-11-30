@@ -145,6 +145,7 @@ export default function AboutSection() {
               Über uns
             </h2>
 
+            {/* eslint-disable react/no-unescaped-entities */}
             <h3
               ref={subtitleRef}
               className="text-2xl lg:text-3xl font-semibold text-[#fab572] mb-8"
