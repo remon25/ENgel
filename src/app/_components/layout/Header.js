@@ -7,6 +7,40 @@ import Image from "next/image";
 import Bars2 from "../icons/Bars2";
 import Cart from "../icons/Cart";
 
+// Simple Spinner Component
+function Spinner({ size = "sm" }) {
+  const sizeClasses = {
+    sm: "w-4 h-4",
+    md: "w-6 h-6",
+    lg: "w-8 h-8",
+  };
+
+  return (
+    <div className={`${sizeClasses[size]} animate-spin`}>
+      <svg
+        className="w-full h-full text-primary"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        ></circle>
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+    </div>
+  );
+}
+
 function AuthLinks({ status, userName, image, mobile = false }) {
   if (status === "authenticated") {
     return (
@@ -59,6 +93,7 @@ export default function Header() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [allDeliveryFree, setAllDeliveryFree] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [adminLoading, setAdminLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [showDropDown, setShowDropDown] = useState(false);
   const [error, setError] = useState(false);
@@ -72,6 +107,7 @@ export default function Header() {
     // Check if user is an admin
     async function checkAdmin() {
       try {
+        setAdminLoading(true);
         const response = await fetch("/api/check-admin");
         if (response.ok) {
           const data = await response.json();
@@ -79,6 +115,8 @@ export default function Header() {
         }
       } catch (error) {
         console.error("Error checking admin status:", error);
+      } finally {
+        setAdminLoading(false);
       }
     }
 
@@ -152,17 +190,20 @@ export default function Header() {
           <Image src="/logo.png" alt="ENGEL logo" width={70} height={70} />
         </Link>
         <div className="flex gap-8 items-center">
-          {!isAdmin && (
-            <Link href={"/profile"}>
-              <Image
-                src={userData?.image || "/avatar.svg"}
-                alt={userName}
-                className="rounded-[50%]"
-                width={40}
-                height={40}
-              />
-            </Link>
-          )}
+          <div className="w-10 h-10 flex items-center justify-center">
+            {!isAdmin && !adminLoading && (
+              <Link href={"/profile"}>
+                <Image
+                  src={userData?.image || "/avatar.svg"}
+                  alt={userName}
+                  className="rounded-[50%]"
+                  width={40}
+                  height={40}
+                />
+              </Link>
+            )}
+            {adminLoading && <Spinner size="sm" />}
+          </div>
           <button
             className="p-1 border"
             onClick={() => {
@@ -271,7 +312,11 @@ export default function Header() {
           <Link onClick={() => setMobileNavOpen(false)} href={"/contact"}>
             Kontakt
           </Link>
-          {isAdmin ? (
+          {adminLoading ? (
+            <div className="flex items-center justify-center py-4">
+              <Spinner size="md" />
+            </div>
+          ) : isAdmin ? (
             <>
               <Link
                 onClick={() => setMobileNavOpen(false)}
@@ -378,7 +423,10 @@ export default function Header() {
           <Link href={"/contact"}>Kontakt</Link>
         </nav>
         <nav className="flex items-center gap-4 text-white font-semibold">
-          {isAdmin ? (
+          <div className="flex items-center gap-4">
+            {adminLoading ? (
+              <Spinner size="md" />
+            ) : isAdmin ? (
             <>
               <Link
                 href={"/dashboard"}
@@ -386,7 +434,7 @@ export default function Header() {
               >
                 <Image
                   width={20}
-                  height={120}
+                  height={20}
                   alt="dashboard icon"
                   src={"/dashboard.svg"}
                 />
@@ -406,6 +454,7 @@ export default function Header() {
               image={userData?.image}
             />
           )}
+          </div>
 
           <div
             id="cartButton"
