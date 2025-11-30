@@ -8,6 +8,7 @@ import Spinner from "@/app/_components/layout/Spinner";
 import { cartContext } from "@/app/_components/AppContext";
 import Link from "next/link";
 import MenuItem from "@/app/_components/menu/MenuItem";
+import MenuItemOld from "@/app/_components/menu/MenuItemOld";
 
 export default function ProductPage() {
   const [mainImage, setMainImage] = useState(null);
@@ -75,8 +76,8 @@ export default function ProductPage() {
 
   const changeImage = (newImage) => setMainImage(newImage);
    return (
-    <div className="bg-gray-100">
-      <div className="container mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto">
+      <div className="container mx-auto px-4 py-8 md:py-16">
         <div className="flex flex-wrap -mx-4">
           {/* Product Images */}
           <div className="w-full md:w-1/2 px-4 mb-8">
@@ -125,14 +126,7 @@ export default function ProductPage() {
                 </span>
               )}
             </div>
-            {description && (
-              <div className="border-b border-gray-300 py-4 mb-4">
-                <h3 className="text-lg font-semibold mb-2">
-                  Produktbeschreibung
-                </h3>
-                <p className="text-gray-700 mb-6">{description}</p>
-              </div>
-            )}
+            
             <div className="border-b border-gray-300 py-4 mb-4">
               {sizes && (
                 <>
@@ -202,18 +196,28 @@ export default function ProductPage() {
                 Zur Kasse
               </Link>
             </div>
+             
+
           </div>
+            {description && (
+              <div className="border-b border-t border-gray-300 py-4 mb-4 px-4">
+                <h3 className="text-lg font-semibold mb-4">
+                  Produktbeschreibung
+                </h3>
+                <p className="text-gray-700 mb-4">{description}</p>
+              </div>
+            )}
         </div>
       </div>
 
       {relatedProducts.length > 0 && (
-        <div className="mt-16 mb-20">
-          <h2 className="text-[#222] text-left font-bold text-2xl md:text-2xl mb-2 mt-14 p-5 max-w-6xl mx-auto">
+        <div className="mb-20">
+          <h2 className="text-[#222] text-left font-bold text-2xl md:text-2xl p-5 max-w-6xl mx-auto">
             Ähnliche Produkte
           </h2>
-          <div className="w-fit mx-auto grid grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-3 sm:gap-x-6 mt-10 mb-5 p-[10px]">
+          <div className="w-fit mx-auto grid grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-3 sm:gap-x-6 mt-5 mb-5 p-[10px]">
             {relatedProducts.map((relatedProduct, index) => (
-              <MenuItem
+              <MenuItemOld
                 key={`${relatedProduct._id}-${index}`}
                 menuItemInfo={relatedProduct}
                 category={category.name}

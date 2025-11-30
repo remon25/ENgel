@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { cartContext } from "../AppContext";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -61,6 +61,8 @@ export default function Header() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [categories, setCategories] = useState([]);
   const [showDropDown, setShowDropDown] = useState(false);
+  const [error, setError] = useState(false);
+  const mobileMenuRef = useRef(null);
 
   if (userName && userName.includes(" ")) {
     userName = userName.split(" ")[0];
@@ -89,7 +91,7 @@ export default function Header() {
     // Fetch delivery prices
     async function fetchDeliveryPrices() {
       try {
-        const response = await fetch("/api/delivery-prices"); // Update the endpoint if necessary
+        const response = await fetch("/api/delivery-prices");
         if (!response.ok) throw new Error("Failed to fetch delivery prices");
         const prices = await response.json();
         const allFree = prices.every((price) => price.price === 0);
@@ -111,29 +113,40 @@ export default function Header() {
         const data = await response.json();
 
         if (!data || data.length === 0) {
-          setError(true); // No products found for the category
+          setError(true);
         } else {
           setCategories(data);
         }
       } catch (error) {
         console.error("Error loading data:", error);
-        setError(true); // Set error state if fetching fails
+        setError(true);
       }
     }
 
     fetchData();
   }, []);
 
+  // Handle click outside to close mobile menu
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+        setMobileNavOpen(false);
+      }
+    }
+
+    if (mobileNavOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+  }, [mobileNavOpen]);
+
   return (
     <header
       id="header"
       className="fixed top-0 left-0 bg-gray-950 right-0 w-full z-20"
     >
-      {/* {allDeliveryFree && (
-        <div className="flex justify-center text-center items-center w-full h-[50px] text-gray-950 p-2 delivery-promo">
-          Nur heute! Genießen Sie kostenlosen Versand auf alle Bestellungen! 🎉
-        </div>
-      )} */}
       <div className="flex items-center lg:hidden justify-between px-8 py-2">
         <Link className="text-primary font-semibold text-2xl" href={"/"}>
           <Image src="/logo.png" alt="ENGEL logo" width={70} height={70} />
@@ -166,7 +179,7 @@ export default function Header() {
             onClick={(e) => {
               e.preventDefault();
               setShowSidebarContext((prev) => {
-                if (!prev) setMobileNavOpen(false); // Close mobile nav if opening sidebar
+                if (!prev) setMobileNavOpen(false);
                 return !prev;
               });
             }}
@@ -179,11 +192,15 @@ export default function Header() {
             )}
 
             <Cart className="w-6 h-6 fill-white cursor-pointer" />
-          </div>{" "}
+          </div>
         </div>
       </div>
+
       {mobileNavOpen && (
-        <div className="lg:hidden top-0 p-4 bg-gray-950 text-white rounded-lg mt-2 flex flex-col gap-2 text-center">
+        <div
+          ref={mobileMenuRef}
+          className="lg:hidden top-0 p-4 bg-gray-950 text-white rounded-lg mt-2 flex flex-col gap-2 text-center"
+        >
           <Link onClick={() => setMobileNavOpen(false)} href={"/"}>
             Startseite
           </Link>
@@ -219,7 +236,6 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Dropdown menu */}
             {showDropDown && (
               <div
                 className="mt-2 w-full text-white text-center"
@@ -291,9 +307,10 @@ export default function Header() {
                 image={userData?.image}
               />
             </div>
-          )}{" "}
+          )}
         </div>
       )}
+
       <div className="hidden lg:flex items-center justify-between px-8 py-6">
         <nav className="flex items-center gap-8 text-white font-semibold">
           <Link className="text-primary font-semibold text-2xl" href={"/"}>
@@ -330,7 +347,6 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Dropdown menu */}
             {showDropDown && (
               <div
                 className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
@@ -395,7 +411,7 @@ export default function Header() {
             id="cartButton"
             onClick={(e) => {
               e.preventDefault();
-              setShowSidebarContext((prev) => !prev); // Toggle sidebar
+              setShowSidebarContext((prev) => !prev);
             }}
             className="relative block"
           >

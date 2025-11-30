@@ -4,7 +4,7 @@ export default function page() {
   return (
     <div>
       {/* ABOUT Section */}
-      <div className="w-full lg:h-screen h-full m-auto flex items-center justify-center  py-20 bg-gray-50 dark:bg-gray-900">
+      <div className="w-full lg:h-screen h-full m-auto flex items-center justify-center  py-20 bg-gray-50 dark:bg-gray-900 px-4">
         <div className="w-full h-full flex flex-col justify-center items-center sm:px-4 px-2">
           {/* Main Container */}
           <div className="lg:w-[90%] w-full mx-auto flex flex-col lg:gap-10 lg:flex-row items-center justify-center">
@@ -39,19 +39,18 @@ export default function page() {
                 Über uns
               </h2>
               <p className="md:text-xl sm:text-lg text-base mt-2 text-justify sm:px-2 dark:text-gray-300">
-                Engel ist ein führendes Unternehmen im Verkauf von
-                hochwertigen Düften, das für Exzellenz und Eleganz steht. Mit
-                einer breiten Auswahl an erstklassigen Parfüms bieten wir
-                unseren Kunden unvergleichliche Duftkreationen, die zeitlose
-                Schönheit und Stil verkörpern. Jedes unserer Produkte wird
-                sorgfältig ausgewählt, um höchste Qualität und
-                Kundenzufriedenheit zu gewährleisten. Ob für den Alltag oder
-                besondere Anlässe – Engel bringt mit seinen einzigartigen
-                Düften einen Hauch von Luxus in Ihr Leben. Vertrauen Sie auf
-                unsere Expertise und erleben Sie die Welt der erlesenen Parfüms.
-                Das Unternehmen wird von Suleman Abo Shakha geleitet, dessen
-                Vision und Leidenschaft für exquisite Düfte das Herzstück
-                unseres Erfolgs bilden.
+                Engel ist ein führendes Unternehmen im Bereich hochwertiger
+                Parfums und steht für unverwechselbare Eleganz, Stil und höchste
+                Qualität. Mit einer exklusiven Auswahl an erstklassigen Düften
+                bietet Engel ein außergewöhnliches Dufterlebnis, das die Sinne
+                berührt und zeitlose Schönheit verkörpert. Jedes Parfum wird mit
+                größter Sorgfalt ausgewählt, um unseren Kunden nur das Beste zu
+                bieten – von luxuriösen Alltagsdüften bis hin zu besonderen
+                Kompositionen für einzigartige Momente. Engel verbindet moderne 
+                Duftkunst mit klassischer Raffinesse und schafft so Parfums, die
+                einen bleibenden Eindruck hinterlassen. Erleben Sie die Welt
+                exquisiter Düfte und lassen Sie sich von der Qualität,
+                Kreativität und Eleganz von Engel begeistern.
               </p>
               <Link href="/contact">
                 <button className="lg:mt-10 mt-6 lg:px-6 px-4 lg:py-4 py-2 bg-[#d4af5e] rounded-sm lg:text-xl text-lg text-white font-semibold">

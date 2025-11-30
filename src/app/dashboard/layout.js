@@ -155,6 +155,23 @@ function Layout({ children }) {
                   />
                   <span> Lieferung</span>
                 </Link>
+                <Link
+                  onClick={() => setShowAdminSide(false)}
+                  className={`${
+                    path === "/dashboard/subscribers"
+                      ? "border border-gray-700 rounded-[5px]"
+                      : ""
+                  } flex items-center gap-2 font-semibold text-gray-500 hover:text-primary-400 cursor-pointer text-sm ml-3 h-12 p-2`}
+                  href="/dashboard/subscribers"
+                >
+                  <Image
+                    width={30}
+                    height={30}
+                    alt="subscribers icon"
+                    src={"/subscribers.svg"}
+                  />
+                  <span>Abonnenten</span>
+                </Link>
               </div>
             </div>
           </div>

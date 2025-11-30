@@ -1,3 +1,4 @@
+import FeaturedProducts from "../menu/FeatureProducts";
 import FilteredMenu from "./FilteredMenu";
 
 export default async function Page() {
@@ -23,10 +24,7 @@ export default async function Page() {
 
   return (
     <>
-      <h1 className="text-[#222] text-left font-bold text-2xl md:text-2xl mb-2 mt-14 p-5 max-w-6xl mx-auto">
-        Ausgewählte Produkte
-      </h1>
-      <FilteredMenu menu={menu} categories={categories} />;
+    <FeaturedProducts menu={menu} categories={categories} />
     </>
   );
 }

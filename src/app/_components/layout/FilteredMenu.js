@@ -6,6 +6,7 @@ import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
 import Link from "next/link";
+import MenuItemOld from "../menu/MenuItemOld";
 
 export default function FilteredMenu({ menu, categories }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,7 +15,7 @@ export default function FilteredMenu({ menu, categories }) {
   const filteredMenu = menu.filter(
     (item) =>
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      (activeCategory === "all" || item.category === activeCategory) // Filter by category if activeCategory is set
+      (activeCategory === "all" || item.category === activeCategory)
   );
 
   const handleCategoryChange = (event) => {
@@ -51,7 +52,7 @@ export default function FilteredMenu({ menu, categories }) {
         className="menu-items-section w-fit mx-auto grid grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5"
       >
         {filteredMenu.map((item, index) => (
-          <MenuItem
+          <MenuItemOld
             key={`${item._id}-${index}`}
             menuItemInfo={item}
             category={categories?.find((cat) => cat?._id === item.category)?.name}

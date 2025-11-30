@@ -4,6 +4,7 @@ import FilteredMenu from "@/app/_components/layout/FilteredMenu";
 import SearchBar from "@/app/_components/layout/SearchBar";
 import Spinner from "@/app/_components/layout/Spinner";
 import MenuItem from "@/app/_components/menu/MenuItem";
+import MenuItemOld from "@/app/_components/menu/MenuItemOld";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -114,7 +115,7 @@ export default function CategoryPage() {
         className="menu-items-section w-fit mx-auto grid grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5"
       >
         {filteredMenu.map((item, index) => (
-          <MenuItem
+          <MenuItemOld
             key={`${item._id}-${index}`}
             menuItemInfo={item}
             category={item.category.name}

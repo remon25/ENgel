@@ -46,6 +46,9 @@ const UserSchema = new Schema(
     tokenExpiration: {
       type: Date,
     },
+    googleId: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

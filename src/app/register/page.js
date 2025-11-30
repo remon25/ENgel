@@ -65,6 +65,12 @@ export default function RegisterForm() {
 
       if (!response.ok) {
         const errorData = await response.json();
+        
+        // Handle duplicate email error
+        if (errorData.error && errorData.error.includes("E11000")) {
+          throw new Error("Diese E-Mail-Adresse ist bereits registriert.");
+        }
+        
         throw new Error(errorData.message || "Registrierung fehlgeschlagen.");
       }
 
@@ -80,15 +86,15 @@ export default function RegisterForm() {
         )}&token=${encodeURIComponent(token)}`
       );
     } catch (err) {
-      toast.error(err.message, { id: loadingToastId });
+      toast.dismiss(loadingToastId);
+      toast.error(err.message, { duration: 4000 });
     } finally {
       setCreatingUser(false);
-      toast.dismiss(loadingToastId);
     }
   }
 
   return (
-    <form className="block max-w-sm mx-auto mt-24" onSubmit={handleFormSubmit}>
+    <form className="block max-w-sm mx-auto mt-24 p-3" onSubmit={handleFormSubmit}>
       <input
         name="name"
         type="text"

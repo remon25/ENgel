@@ -4,20 +4,25 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { User } from "../../../models/User";
 import bcrypt from "bcrypt";
-import { MongoDBAdapter } from "@auth/mongodb-adapter";
-import client from "../../../libs/mongoConnect";
-import { sign } from "jsonwebtoken";
+
+// Ensure connection
+const ensureConnection = async () => {
+  if (mongoose.connection.readyState === 0) {
+    await mongoose.connect(process.env.MONGO_URL);
+  }
+};
 
 export const authOptions = {
-  secret: process.env.SECRET,
-  adapter: MongoDBAdapter(client),
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true, // Allow linking accounts with same email
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -30,59 +35,92 @@ export const authOptions = {
         },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         const { email, password } = credentials;
 
-        mongoose.connect(process.env.MONGO_URL);
+        await ensureConnection();
 
         const user = await User.findOne({ email });
         if (!user) {
-          return null;
+          throw new Error("No user found with this email");
         }
 
         const isPasswordValid = bcrypt.compareSync(password, user.password);
-        
+
         if (!isPasswordValid) {
           throw new Error("Invalid credentials.");
         }
-      
+
         if (!user.isVerified) {
-          throw new Error("UNVERIFIED_USER"); // Throw a specific error
+          throw new Error("UNVERIFIED_USER");
         }
 
-        if (user && isPasswordValid) {
-          // Generate a JWT token for the user
-          const token = sign(
-            { id: user._id, email: user.email }, // Add any other user info as needed
-            process.env.JWT_SECRET, // Use a secret key for signing the JWT
-            { expiresIn: '1h' } // Set the token expiration time
-          );
-          return { ...user.toObject(), token }; // Return user info and token
-        }
-
-        return null;
+        return {
+          id: user._id.toString(),
+          email: user.email,
+          name: user.name,
+        };
       },
     }),
   ],
   callbacks: {
-    // Callback to handle JWT token during the authentication flow
-    async jwt({ token, user }) {
+    async signIn({ user, account, profile }) {
+      if (account?.provider === "google") {
+        try {
+          console.log("Processing Google signin for:", user.email);
+          await ensureConnection();
+
+          let dbUser = await User.findOne({ email: user.email });
+
+          if (!dbUser) {
+            console.log("Creating new Google user");
+            dbUser = await User.create({
+              email: user.email,
+              name: user.name || profile.name,
+              image: user.image,
+              isVerified: true,
+              googleId: profile.sub,
+            });
+          } else {
+            console.log("Linking Google to existing user");
+            if (!dbUser.googleId) {
+              dbUser.googleId = profile.sub;
+              await dbUser.save();
+            }
+          }
+
+          user.id = dbUser._id.toString();
+          console.log("Google signin successful for user:", user.id);
+          return true;
+        } catch (error) {
+          console.error("Google signin error:", error);
+          return "/auth/error?error=GoogleSigninFailed";
+        }
+      }
+
+      return true;
+    },
+
+    async jwt({ token, user, account }) {
       if (user) {
-        token.id = user._id;
+        token.id = user.id;
         token.email = user.email;
-        token.token = user.token; // Add token to the JWT
       }
       return token;
     },
-    // Callback to handle session when it's created or updated
+
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id;
         session.user.email = token.email;
-        session.user.token = token.token; // Add the token to the session
       }
       return session;
     },
+  },
+
+  pages: {
+    signIn: "/auth/signin",
+    error: "/auth/error",
   },
 };
 
