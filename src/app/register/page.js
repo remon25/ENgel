@@ -65,12 +65,12 @@ export default function RegisterForm() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        
+
         // Handle duplicate email error
         if (errorData.error && errorData.error.includes("E11000")) {
           throw new Error("Diese E-Mail-Adresse ist bereits registriert.");
         }
-        
+
         throw new Error(errorData.message || "Registrierung fehlgeschlagen.");
       }
 
@@ -94,85 +94,93 @@ export default function RegisterForm() {
   }
 
   return (
-    <form className="block max-w-sm mx-auto mt-24 p-3" onSubmit={handleFormSubmit}>
-      <input
-        name="name"
-        type="text"
-        placeholder="Name"
-        value={name}
-        required
-        disabled={creatingUser}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <input
-        name="email"
-        type="email"
-        placeholder="E-Mail"
-        value={email}
-        required
-        disabled={creatingUser}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        name="phone"
-        type="tel"
-        placeholder="Handynummer"
-        value={phone}
-        required
-        disabled={creatingUser}
-        onChange={(e) => setPhone(e.target.value)}
-      />
-      <input
-        name="streetAddress"
-        type="text"
-        placeholder="Straßenadresse"
-        value={streetAddress}
-        required
-        disabled={creatingUser}
-        onChange={(e) => setStreetAddress(e.target.value)}
-      />
-      <input
-        name="password"
-        type="password"
-        placeholder="Passwort"
-        value={password}
-        required
-        disabled={creatingUser}
-        minLength={8}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button
-        type="submit"
-        disabled={creatingUser}
-        className={`bg-primary text-white px-6 py-2 rounded-[8px] ${
-          creatingUser ? "opacity-50 cursor-not-allowed" : ""
-        }`}
+    <div className="mt-16 p-4">
+      <h1 className="text-center text-primary text-4xl font-bold">
+        Registrieren 
+      </h1>
+      <form
+        className="block max-w-sm mx-auto mt-5 p-3"
+        onSubmit={handleFormSubmit}
       >
-        {creatingUser ? "Registrieren..." : "Registrieren"}
-      </button>
-      <div className="text-center my-4 text-gray-500">
-        Oder melde dich mit einem Anbieter an
-      </div>
-      <button
-        type="button"
-        onClick={() => signIn("google", { callbackUrl: "/" })}
-        className="mybutton mt-4 flex justify-center items-center gap-4"
-        disabled={creatingUser}
-      >
-        <Image
-          src="/google-logo.png"
-          alt="Mit Google anmelden"
-          width={32}
-          height={32}
+        <input
+          name="name"
+          type="text"
+          placeholder="Name"
+          value={name}
+          required
+          disabled={creatingUser}
+          onChange={(e) => setName(e.target.value)}
         />
-        Mit Google anmelden
-      </button>
-      <div className="text-center text-gray-700 my-4">
-        Hast du bereits ein Konto?{" "}
-        <Link className="underline" href="/login">
-          Einloggen
-        </Link>
-      </div>
-    </form>
+        <input
+          name="email"
+          type="email"
+          placeholder="E-Mail"
+          value={email}
+          required
+          disabled={creatingUser}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          name="phone"
+          type="tel"
+          placeholder="Handynummer"
+          value={phone}
+          required
+          disabled={creatingUser}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+        <input
+          name="streetAddress"
+          type="text"
+          placeholder="Straßenadresse"
+          value={streetAddress}
+          required
+          disabled={creatingUser}
+          onChange={(e) => setStreetAddress(e.target.value)}
+        />
+        <input
+          name="password"
+          type="password"
+          placeholder="Passwort"
+          value={password}
+          required
+          disabled={creatingUser}
+          minLength={8}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button
+          type="submit"
+          disabled={creatingUser}
+          className={`bg-primary text-white px-6 py-2 rounded-[8px] ${
+            creatingUser ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          {creatingUser ? "Registrieren..." : "Registrieren"}
+        </button>
+        <div className="text-center my-4 text-gray-500">
+          Oder melde dich mit einem Anbieter an
+        </div>
+        <button
+          type="button"
+          onClick={() => signIn("google", { callbackUrl: "/" })}
+          className="mybutton mt-4 flex justify-center items-center gap-4"
+          disabled={creatingUser}
+        >
+          <Image
+            src="/google-logo.png"
+            alt="Mit Google anmelden"
+            width={32}
+            height={32}
+          />
+          Mit Google anmelden
+        </button>
+        <div className="text-center text-gray-700 my-4">
+          Hast du bereits ein Konto?{" "}
+          <Link className="underline" href="/login">
+            Einloggen
+          </Link>
+        </div>
+      </form>
+    </div>
   );
 }
