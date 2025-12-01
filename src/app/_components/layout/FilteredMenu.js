@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import SearchBar from "./SearchBar";
 import "swiper/css";
 import "swiper/css/free-mode";
@@ -8,7 +8,7 @@ import MenuItemOld from "../menu/MenuItemOld";
 import Spinner from "./Spinner";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function FilteredMenu({ categories }) {
+function FilteredMenuContent({ categories }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(
@@ -231,5 +231,13 @@ export default function FilteredMenu({ categories }) {
         )}
       </div>
     </section>
+  );
+}
+
+export default function FilteredMenu({ categories }) {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center py-20"><Spinner /></div>}>
+      <FilteredMenuContent categories={categories} />
+    </Suspense>
   );
 }
