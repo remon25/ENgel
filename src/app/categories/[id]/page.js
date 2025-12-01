@@ -22,15 +22,15 @@ export default function CategoryPage() {
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 0);
   };
 
-  // Reset to page 1 when search changes
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery]);
 
-  // Fetch category only once when component mounts
   useEffect(() => {
     if (!id) return;
 
@@ -50,7 +50,6 @@ export default function CategoryPage() {
     fetchCategory();
   }, [id]);
 
-  // Fetch products with pagination and search
   useEffect(() => {
     if (!id) return;
 
@@ -113,7 +112,7 @@ export default function CategoryPage() {
   if (productsError) {
     return (
       <div className="w-full h-screen flex items-center justify-center overflow-hidden">
-        <h1 className="text-2xl font-bold text-red-500">Category Not Found</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Category Not Found</h1>
       </div>
     );
   }
@@ -147,101 +146,95 @@ export default function CategoryPage() {
         </div>
       </div>
 
-      {loading ? (
-        <div className="flex justify-center items-center py-20">
-          <Spinner />
-        </div>
-      ) : (
-        <>
-          <section
-            id="Projects"
-            className="menu-items-section w-fit mx-auto grid grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5"
-          >
-            {products.map((item, index) => (
-              <MenuItemOld
-                key={`${item._id}-${index}`}
-                menuItemInfo={item}
-                category={item.category.name}
-                isOffersCategory={false}
-              />
-            ))}
-          </section>
+      <div className={loading ? "opacity-50 pointer-events-none relative" : "relative"}>
+        {loading && (
+          <div className="absolute inset-0 flex justify-center items-center z-10">
+            <Spinner />
+          </div>
+        )}
 
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="flex flex-col items-center gap-4 mt-10 mb-5">
-              <div className="flex flex-wrap justify-center gap-2">
-                <button
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
-                  disabled={currentPage === 1}
-                  className="px-3 py-2 text-sm md:px-4 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
-                >
-                  Zurück
-                </button>
+        <section
+          id="Projects"
+          className="menu-items-section w-fit mx-auto grid grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5"
+        >
+          {products && products.map((item, index) => (
+            <MenuItemOld
+              key={`${item._id}-${index}`}
+              menuItemInfo={item}
+              category={item.category.name}
+              isOffersCategory={false}
+            />
+          ))}
+        </section>
 
-                {Array.from({ length: totalPages }, (_, i) => i + 1)
-                  .filter((page) => {
-                    const isMobile =
-                      typeof window !== "undefined" && window.innerWidth < 768;
-                    if (isMobile) {
-                      return (
-                        page === currentPage ||
-                        page === currentPage - 1 ||
-                        page === currentPage + 1 ||
-                        page === 1 ||
-                        page === totalPages
-                      );
-                    }
-                    return true;
-                  })
-                  .map((page, index, filtered) => {
-                    if (index > 0 && filtered[index - 1] < page - 1) {
-                      return (
-                        <div key={`ellipsis-${page}`}>
-                          <span className="px-2 py-2">...</span>
-                        </div>
-                      );
-                    }
+        {totalPages > 1 && (
+          <div className="flex flex-col items-center gap-4 mt-10 mb-5">
+            <div className="flex flex-wrap justify-center gap-2">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-2 text-sm md:px-4 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+              >
+                Zurück
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((page) => {
+                  const isMobile =
+                    typeof window !== "undefined" && window.innerWidth < 768;
+                  if (isMobile) {
                     return (
-                      <button
-                        key={page}
-                        onClick={() => handlePageChange(page)}
-                        className={`px-3 py-2 text-sm rounded-lg ${
-                          currentPage === page
-                            ? "bg-gray-900 text-white"
-                            : "border border-gray-300 hover:bg-gray-100"
-                        }`}
-                      >
-                        {page}
-                      </button>
+                      page === currentPage ||
+                      page === currentPage - 1 ||
+                      page === currentPage + 1 ||
+                      page === 1 ||
+                      page === totalPages
                     );
-                  })}
-
-                <button
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
-                  disabled={currentPage === totalPages}
-                  className="px-3 py-2 text-sm md:px-4 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
-                >
-                  Weiter
-                </button>
-              </div>
-            </div>
-          )}
+                  return true;
+                })
+                .map((page, index, filtered) => {
+                  if (index > 0 && filtered[index - 1] < page - 1) {
+                    return (
+                      <div key={`ellipsis-${page}`}>
+                        <span className="px-2 py-2">...</span>
+                      </div>
+                    );
+                  }
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`px-3 py-2 text-sm rounded-lg ${
+                        currentPage === page
+                          ? "bg-gray-900 text-white"
+                          : "border border-gray-300 hover:bg-gray-100"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
 
-          {/* Results Count */}
-          {totalProducts > 0 && (
-            <div className="text-center text-sm text-gray-600 mb-5">
-              Zeige {(currentPage - 1) * itemsPerPage + 1} bis{" "}
-              {Math.min(currentPage * itemsPerPage, totalProducts)} von{" "}
-              {totalProducts}
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-2 text-sm md:px-4 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+              >
+                Weiter
+              </button>
             </div>
-          )}
-        </>
-      )}
+          </div>
+        )}
+
+        {totalProducts > 0 && (
+          <div className="text-center text-sm text-gray-600 mb-5">
+            Zeige {(currentPage - 1) * itemsPerPage + 1} bis{" "}
+            {Math.min(currentPage * itemsPerPage, totalProducts)} von{" "}
+            {totalProducts}
+          </div>
+        )}
+      </div>
     </>
   );
 }
