@@ -22,7 +22,7 @@ export default async function Page() {
 
   return (
     <>
-      <h1 className="text-[#222] text-left font-bold text-2xl md:text-2xl mb-2 mt-14 p-5 max-w-6xl mx-auto">
+      <h1 className="text-[#222] text-left font-bold text-2xl md:text-2xl mb-2 sm:mt-14 p-5 max-w-6xl mx-auto">
         Alle Produkte
       </h1>
       <FilteredMenu menu={menu} categories={categories} />;

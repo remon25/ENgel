@@ -51,24 +51,6 @@ export default function CategoryPageClient() {
     updateUrl(1, value);
   };
 
-  useEffect(() => {
-    if (!id) return;
-
-    async function fetchCategory() {
-      try {
-        const response = await fetch(`/api/categories/${id}`);
-        if (!response.ok) throw new Error("Category not found");
-        const data = await response.json();
-        setCategory(data);
-        setProductsError(false);
-      } catch (error) {
-        console.error("Error fetching category:", error);
-        setProductsError(true);
-      }
-    }
-
-    fetchCategory();
-  }, [id]);
 
   useEffect(() => {
     if (!id) return;
@@ -140,7 +122,7 @@ export default function CategoryPageClient() {
   if (products?.length === 0 && !loading) {
     return (
       <>
-        <h1 className="text-[#222] text-left font-bold text-2xl md:text-2xl mb-2 mt-14 p-5 max-w-6xl mx-auto">
+        <h1 className="text-[#222] text-left font-bold text-2xl md:text-2xl mb-2 sm:mt-14 p-5 max-w-6xl mx-auto">
           {category?.name} Produkte
         </h1>
         <div className="w-full h-screen flex items-center justify-center overflow-hidden">
@@ -156,7 +138,7 @@ export default function CategoryPageClient() {
 
   return (
     <>
-      <h1 className="text-[#222] text-left font-bold text-2xl md:text-2xl mb-2 mt-14 p-5 max-w-6xl mx-auto">
+      <h1 className="text-[#222] text-left font-bold text-2xl md:text-2xl mb-2 sm:mt-14 p-5 max-w-6xl mx-auto">
         {category?.name} Produkte
       </h1>
 
