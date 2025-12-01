@@ -6,10 +6,10 @@ export default async function Page() {
 
   try {
     const [menuRes, categoryRes] = await Promise.all([
-      fetch(`${process.env.NEXTAUTH_URL}/api/products`, {
+      fetch(`/api/products`, {
         cache: "no-store",
       }),
-      fetch(`${process.env.NEXTAUTH_URL}/api/categories`, {
+      fetch(`/api/categories`, {
         cache: "no-store",
       }),
     ]);
