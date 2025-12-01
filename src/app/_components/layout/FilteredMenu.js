@@ -24,6 +24,7 @@ function FilteredMenuContent({ categories }) {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [totalProducts, setTotalProducts] = useState(0);
+  const [fadeOut, setFadeOut] = useState(false);
 
   const itemsPerPage = 12;
 
@@ -40,11 +41,15 @@ function FilteredMenuContent({ categories }) {
   };
 
   const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-    updateUrl(newPage, searchQuery, activeCategory);
+    // Fade out animation
+    setFadeOut(true);
+    
+    // Wait for fade out, then update page and scroll
     setTimeout(() => {
+      setCurrentPage(newPage);
+      updateUrl(newPage, searchQuery, activeCategory);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 0);
+    }, 200);
   };
 
   const handleSearchChange = (value) => {
@@ -64,6 +69,7 @@ function FilteredMenuContent({ categories }) {
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
+      setFadeOut(false);
       try {
         const params = new URLSearchParams({
           paginated: "true",
@@ -102,7 +108,7 @@ function FilteredMenuContent({ categories }) {
   return (
     <section className="home-menu">
       {/* Sticky SearchBar */}
-      <div className="z-[11] bg-white max-w-6xl mx-auto">
+      <div className="z-[11] bg-white max-w-6xl mx-auto sticky top-0">
         <div className="flex items-center">
           <SearchBar value={searchQuery} onChange={handleSearchChange} />
           <div className="w-full pt-2 px-4 relative mx-auto text-gray-600">
@@ -123,38 +129,49 @@ function FilteredMenuContent({ categories }) {
         </div>
       </div>
 
-      {/* Products Container with Overlay Loading State */}
-      <div className={loading ? "pointer-events-none relative" : "relative"}>
+      {/* Products Container with Smooth Loading State */}
+      <div className="relative">
+        {/* Menu Items Grid with Fade Transition */}
+        <div
+          className={`transition-all duration-200 ease-in-out ${
+            fadeOut || loading
+              ? "opacity-50 pointer-events-none"
+              : "opacity-100"
+          }`}
+        >
+          {filteredMenu.length > 0 && (
+            <section
+              id="Projects"
+              className="menu-items-section w-fit mx-auto grid grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5"
+            >
+              {filteredMenu.map((item, index) => (
+                <MenuItemOld
+                  key={`${item._id}-${index}`}
+                  menuItemInfo={item}
+                  category={
+                    categories?.find((cat) => cat?._id === item.category._id)
+                      ?.name
+                  }
+                  isOffersCategory={false}
+                />
+              ))}
+            </section>
+          )}
+
+          {/* No Results */}
+          {filteredMenu.length === 0 && !loading && (
+            <div className="flex justify-center items-center py-20">
+              <p className="text-gray-600 text-lg">Keine Produkte gefunden</p>
+            </div>
+          )}
+        </div>
+
+        {/* Loading Overlay - Centered Spinner */}
         {loading && (
-          <div className="absolute inset-0 flex justify-center items-center z-10 bg-white my-28">
-            <Spinner />
-          </div>
-        )}
-
-        {/* Menu Items Grid */}
-        {filteredMenu.length > 0 && (
-          <section
-            id="Projects"
-            className="menu-items-section w-fit mx-auto grid grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5"
-          >
-            {filteredMenu.map((item, index) => (
-              <MenuItemOld
-                key={`${item._id}-${index}`}
-                menuItemInfo={item}
-                category={
-                  categories?.find((cat) => cat?._id === item.category._id)
-                    ?.name
-                }
-                isOffersCategory={false}
-              />
-            ))}
-          </section>
-        )}
-
-        {/* No Results */}
-        {filteredMenu.length === 0 && !loading && (
-          <div className="flex justify-center items-center py-20">
-            <p className="text-gray-600 text-lg">Keine Produkte gefunden</p>
+          <div className="absolute inset-0 flex justify-center items-center min-h-96 z-20">
+            <div className="flex flex-col items-center gap-3">
+              <Spinner />
+            </div>
           </div>
         )}
 
@@ -165,7 +182,7 @@ function FilteredMenuContent({ categories }) {
               <button
                 onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-2 text-sm md:px-4 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+                className="px-3 py-2 text-sm md:px-4 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
               >
                 Zurück
               </button>
@@ -197,9 +214,9 @@ function FilteredMenuContent({ categories }) {
                     <button
                       key={page}
                       onClick={() => handlePageChange(page)}
-                      className={`px-3 py-2 text-sm rounded-lg ${
+                      className={`px-3 py-2 text-sm rounded-lg transition-all duration-200 ${
                         currentPage === page
-                          ? "bg-gray-900 text-white"
+                          ? "bg-gray-900 text-white shadow-md"
                           : "border border-gray-300 hover:bg-gray-100"
                       }`}
                     >
@@ -213,7 +230,7 @@ function FilteredMenuContent({ categories }) {
                   handlePageChange(Math.min(currentPage + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
-                className="px-3 py-2 text-sm md:px-4 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+                className="px-3 py-2 text-sm md:px-4 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
               >
                 Weiter
               </button>
