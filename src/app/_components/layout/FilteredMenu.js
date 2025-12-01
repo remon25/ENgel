@@ -97,7 +97,7 @@ export default function FilteredMenu({ categories }) {
 
       {/* Loading State */}
       {loading && (
-        <div className="flex justify-center items-center py-20 h-screen">
+        <div className="flex justify-center items-center py-20">
           <Spinner />
         </div>
       )}
