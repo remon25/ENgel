@@ -3,33 +3,53 @@
 import SearchBar from "@/app/_components/layout/SearchBar";
 import Spinner from "@/app/_components/layout/Spinner";
 import MenuItemOld from "@/app/_components/menu/MenuItemOld";
-import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 
 export default function CategoryPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { id } = useParams();
+
   const [products, setProducts] = useState(null);
   const [productsError, setProductsError] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(
+    searchParams.get("search") || ""
+  );
   const [category, setCategory] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(
+    parseInt(searchParams.get("page")) || 1
+  );
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [totalProducts, setTotalProducts] = useState(0);
-  const { id } = useParams();
 
   const itemsPerPage = 12;
 
+  const updateUrl = (page, search) => {
+    const params = new URLSearchParams();
+    if (page > 1) params.set("page", page);
+    if (search) params.set("search", search);
+
+    const newUrl =
+      params.toString() === "" ? window.location.pathname : `?${params}`;
+    router.push(newUrl, { shallow: true });
+  };
+
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
+    updateUrl(newPage, searchQuery);
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }, 0);
   };
 
-  useEffect(() => {
+  const handleSearchChange = (value) => {
+    setSearchQuery(value);
     setCurrentPage(1);
-  }, [searchQuery]);
+    updateUrl(1, value);
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -142,11 +162,15 @@ export default function CategoryPage() {
 
       <div className="sticky top-0 z-[11] bg-white max-w-6xl mx-auto">
         <div className="flex items-center">
-          <SearchBar value={searchQuery} onChange={setSearchQuery} />
+          <SearchBar value={searchQuery} onChange={handleSearchChange} />
         </div>
       </div>
 
-      <div className={loading ? "opacity-50 pointer-events-none relative" : "relative"}>
+      <div
+        className={
+          loading ? "opacity-50 pointer-events-none relative" : "relative"
+        }
+      >
         {loading && (
           <div className="absolute inset-0 flex justify-center items-center z-10">
             <Spinner />
@@ -157,14 +181,15 @@ export default function CategoryPage() {
           id="Projects"
           className="menu-items-section w-fit mx-auto grid grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5"
         >
-          {products && products.map((item, index) => (
-            <MenuItemOld
-              key={`${item._id}-${index}`}
-              menuItemInfo={item}
-              category={item.category.name}
-              isOffersCategory={false}
-            />
-          ))}
+          {products &&
+            products.map((item, index) => (
+              <MenuItemOld
+                key={`${item._id}-${index}`}
+                menuItemInfo={item}
+                category={item.category.name}
+                isOffersCategory={false}
+              />
+            ))}
         </section>
 
         {totalPages > 1 && (
@@ -217,7 +242,9 @@ export default function CategoryPage() {
                 })}
 
               <button
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
                 disabled={currentPage === totalPages}
                 className="px-3 py-2 text-sm md:px-4 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
               >

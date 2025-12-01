@@ -4,32 +4,61 @@ import SearchBar from "./SearchBar";
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
-import Link from "next/link";
 import MenuItemOld from "../menu/MenuItemOld";
 import Spinner from "./Spinner";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function FilteredMenu({ categories }) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("all");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState(
+    searchParams.get("search") || ""
+  );
+  const [activeCategory, setActiveCategory] = useState(
+    searchParams.get("category") || "all"
+  );
   const [filteredMenu, setFilteredMenu] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(
+    parseInt(searchParams.get("page")) || 1
+  );
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [totalProducts, setTotalProducts] = useState(0);
 
   const itemsPerPage = 12;
 
+  // Update URL when pagination, search, or category changes
+  const updateUrl = (page, search, category) => {
+    const params = new URLSearchParams();
+    if (page > 1) params.set("page", page);
+    if (search) params.set("search", search);
+    if (category !== "all") params.set("category", category);
+
+    const newUrl =
+      params.toString() === "" ? window.location.pathname : `?${params}`;
+    router.push(newUrl, { shallow: true });
+  };
+
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
+    updateUrl(newPage, searchQuery, activeCategory);
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }, 0);
   };
 
-  // Fetch products with pagination, search, and category filter
-  useEffect(() => {
+  const handleSearchChange = (value) => {
+    setSearchQuery(value);
     setCurrentPage(1);
-  }, [searchQuery, activeCategory]);
+    updateUrl(1, value, activeCategory);
+  };
+
+  const handleCategoryChange = (event) => {
+    const newCategory = event.target.value;
+    setActiveCategory(newCategory);
+    setCurrentPage(1);
+    updateUrl(1, searchQuery, newCategory);
+  };
 
   // Fetch on page change or filter change
   useEffect(() => {
@@ -70,14 +99,6 @@ export default function FilteredMenu({ categories }) {
     fetchProducts();
   }, [currentPage, searchQuery, activeCategory]);
 
-  const handleCategoryChange = (event) => {
-    setActiveCategory(event.target.value);
-  };
-
-  const handleSearchChange = (value) => {
-    setSearchQuery(value);
-  };
-
   return (
     <section className="home-menu">
       {/* Sticky SearchBar */}
@@ -103,9 +124,9 @@ export default function FilteredMenu({ categories }) {
       </div>
 
       {/* Products Container with Overlay Loading State */}
-      <div className={loading ? "opacity-50 pointer-events-none relative" : "relative"}>
+      <div className={loading ? "pointer-events-none relative" : "relative"}>
         {loading && (
-          <div className="absolute inset-0 flex justify-center items-center z-10">
+          <div className="absolute inset-0 flex justify-center items-center z-10 bg-white my-28">
             <Spinner />
           </div>
         )}
@@ -121,7 +142,8 @@ export default function FilteredMenu({ categories }) {
                 key={`${item._id}-${index}`}
                 menuItemInfo={item}
                 category={
-                  categories?.find((cat) => cat?._id === item.category._id)?.name
+                  categories?.find((cat) => cat?._id === item.category._id)
+                    ?.name
                 }
                 isOffersCategory={false}
               />
@@ -130,7 +152,7 @@ export default function FilteredMenu({ categories }) {
         )}
 
         {/* No Results */}
-        {filteredMenu.length === 0 && (
+        {filteredMenu.length === 0 && !loading && (
           <div className="flex justify-center items-center py-20">
             <p className="text-gray-600 text-lg">Keine Produkte gefunden</p>
           </div>
@@ -141,9 +163,7 @@ export default function FilteredMenu({ categories }) {
           <div className="flex flex-col items-center gap-4 mt-10 mb-5">
             <div className="flex flex-wrap justify-center gap-2">
               <button
-                onClick={() =>
-                  handlePageChange(Math.max(currentPage - 1, 1))
-                }
+                onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
                 disabled={currentPage === 1}
                 className="px-3 py-2 text-sm md:px-4 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
               >
