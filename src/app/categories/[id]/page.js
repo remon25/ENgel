@@ -1,11 +1,8 @@
 "use client";
 
-import FilteredMenu from "@/app/_components/layout/FilteredMenu";
 import SearchBar from "@/app/_components/layout/SearchBar";
 import Spinner from "@/app/_components/layout/Spinner";
-import MenuItem from "@/app/_components/menu/MenuItem";
 import MenuItemOld from "@/app/_components/menu/MenuItemOld";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -15,23 +12,27 @@ export default function CategoryPage() {
   const [categories, setCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [totalProducts, setTotalProducts] = useState(0);
   const { id } = useParams();
 
+  const itemsPerPage = 12;
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Reset to page 1 when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
+  // Fetch category only once when component mounts
   useEffect(() => {
     if (!id) return;
-
-    async function fetchProducts() {
-      try {
-        const response = await fetch(`/api/products?category=${id}`);
-        if (!response.ok) throw new Error("Failed to load products");
-        const data = await response.json();
-        setProducts(data);
-        setProductsError(false);
-      } catch (error) {
-        console.error("Error loading products:", error);
-        setProductsError(true);
-      }
-    }
 
     async function fetchCategory() {
       try {
@@ -39,14 +40,52 @@ export default function CategoryPage() {
         if (!response.ok) throw new Error("Category not found");
         const data = await response.json();
         setCategory(data);
+        setProductsError(false);
       } catch (error) {
         console.error("Error fetching category:", error);
+        setProductsError(true);
+      }
+    }
+
+    fetchCategory();
+  }, [id]);
+
+  // Fetch products with pagination and search
+  useEffect(() => {
+    if (!id) return;
+
+    async function fetchProducts() {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams({
+          category: id,
+          page: currentPage,
+          limit: itemsPerPage,
+        });
+
+        if (searchQuery) {
+          params.append("paginated", "true");
+          params.append("search", searchQuery);
+        }
+
+        const response = await fetch(`/api/products?${params}`);
+        if (!response.ok) throw new Error("Failed to load products");
+        const data = await response.json();
+        setProducts(data.products);
+        setTotalPages(data.pagination.totalPages);
+        setTotalProducts(data.pagination.totalProducts);
+        setProductsError(false);
+      } catch (error) {
+        console.error("Error loading products:", error);
+        setProductsError(true);
+        setProducts(null);
+      } finally {
+        setLoading(false);
       }
     }
 
     fetchProducts();
-    fetchCategory();
-  }, [id]);
+  }, [id, currentPage, searchQuery]);
 
   useEffect(() => {
     async function fetchCategories() {
@@ -63,11 +102,7 @@ export default function CategoryPage() {
     fetchCategories();
   }, []);
 
-  const filteredMenu = products?.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  if (products === null) {
+  if (loading && products === null) {
     return (
       <div className="w-full h-screen flex items-center justify-center overflow-hidden">
         <Spinner />
@@ -83,7 +118,7 @@ export default function CategoryPage() {
     );
   }
 
-  if (products.length === 0) {
+  if (products?.length === 0 && !loading) {
     return (
       <>
         <h1 className="text-[#222] text-left font-bold text-2xl md:text-2xl mb-2 mt-14 p-5 max-w-6xl mx-auto">
@@ -91,7 +126,9 @@ export default function CategoryPage() {
         </h1>
         <div className="w-full h-screen flex items-center justify-center overflow-hidden">
           <h1 className="text-2xl font-bold text-gray-500">
-            No products found in this category.
+            {searchQuery
+              ? "Keine Produkte gefunden"
+              : "No products found in this category."}
           </h1>
         </div>
       </>
@@ -110,19 +147,101 @@ export default function CategoryPage() {
         </div>
       </div>
 
-      <section
-        id="Projects"
-        className="menu-items-section w-fit mx-auto grid grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5"
-      >
-        {filteredMenu.map((item, index) => (
-          <MenuItemOld
-            key={`${item._id}-${index}`}
-            menuItemInfo={item}
-            category={item.category.name}
-            isOffersCategory={false}
-          />
-        ))}
-      </section>
+      {loading ? (
+        <div className="flex justify-center items-center py-20">
+          <Spinner />
+        </div>
+      ) : (
+        <>
+          <section
+            id="Projects"
+            className="menu-items-section w-fit mx-auto grid grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5"
+          >
+            {products.map((item, index) => (
+              <MenuItemOld
+                key={`${item._id}-${index}`}
+                menuItemInfo={item}
+                category={item.category.name}
+                isOffersCategory={false}
+              />
+            ))}
+          </section>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex flex-col items-center gap-4 mt-10 mb-5">
+              <div className="flex flex-wrap justify-center gap-2">
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                  className="px-3 py-2 text-sm md:px-4 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+                >
+                  Zurück
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter((page) => {
+                    const isMobile =
+                      typeof window !== "undefined" && window.innerWidth < 768;
+                    if (isMobile) {
+                      return (
+                        page === currentPage ||
+                        page === currentPage - 1 ||
+                        page === currentPage + 1 ||
+                        page === 1 ||
+                        page === totalPages
+                      );
+                    }
+                    return true;
+                  })
+                  .map((page, index, filtered) => {
+                    if (index > 0 && filtered[index - 1] < page - 1) {
+                      return (
+                        <div key={`ellipsis-${page}`}>
+                          <span className="px-2 py-2">...</span>
+                        </div>
+                      );
+                    }
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => handlePageChange(page)}
+                        className={`px-3 py-2 text-sm rounded-lg ${
+                          currentPage === page
+                            ? "bg-gray-900 text-white"
+                            : "border border-gray-300 hover:bg-gray-100"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
+
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-2 text-sm md:px-4 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+                >
+                  Weiter
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Results Count */}
+          {totalProducts > 0 && (
+            <div className="text-center text-sm text-gray-600 mb-5">
+              Zeige {(currentPage - 1) * itemsPerPage + 1} bis{" "}
+              {Math.min(currentPage * itemsPerPage, totalProducts)} von{" "}
+              {totalProducts}
+            </div>
+          )}
+        </>
+      )}
     </>
   );
 }

@@ -71,8 +71,97 @@ export async function GET(req) {
     const url = new URL(req.url);
     const _id = url.searchParams.get("_id");
     const getRelated = url.searchParams.get("related");
-
     const categoryId = url.searchParams.get("category");
+    
+    // Pagination parameters
+    const page = parseInt(url.searchParams.get("page")) || 1;
+    const limit = parseInt(url.searchParams.get("limit")) || 12;
+    const searchQuery = url.searchParams.get("search") || "";
+    const isPaginated = url.searchParams.get("paginated") === "true";
+
+    if (isPaginated) {
+      // Server-side pagination endpoint
+      const skip = (page - 1) * limit;
+      const query = {};
+
+      if (categoryId) {
+        query.category = new mongoose.Types.ObjectId(categoryId);
+      }
+
+      if (searchQuery) {
+        query.name = { $regex: searchQuery, $options: "i" };
+      }
+
+      const totalProducts = await ProductItem.countDocuments(query);
+      const products = await ProductItem.find(query)
+        .populate("category")
+        .limit(limit)
+        .skip(skip)
+        .sort({ createdAt: -1 });
+
+      const totalPages = Math.ceil(totalProducts / limit);
+
+      return new Response(
+        JSON.stringify({
+          products,
+          pagination: {
+            currentPage: page,
+            totalPages,
+            totalProducts,
+            limit,
+            hasNextPage: page < totalPages,
+            hasPrevPage: page > 1,
+          },
+        }),
+        { status: 200 }
+      );
+    }
+
+    if (categoryId && !searchQuery && !isPaginated) {
+      // Fetch products by category with pagination (new endpoint)
+      const skip = (page - 1) * limit;
+
+      // Verify category exists
+      const categoryExists = await ProductItem.findOne({
+        category: new mongoose.Types.ObjectId(categoryId),
+      });
+
+      if (!categoryExists) {
+        return new Response(
+          JSON.stringify({ error: "Category not found" }),
+          { status: 404 }
+        );
+      }
+
+      const totalProducts = await ProductItem.countDocuments({
+        category: new mongoose.Types.ObjectId(categoryId),
+      });
+
+      const products = await ProductItem.find({
+        category: new mongoose.Types.ObjectId(categoryId),
+      })
+        .populate("category")
+        .limit(limit)
+        .skip(skip)
+        .sort({ createdAt: -1 });
+
+      const totalPages = Math.ceil(totalProducts / limit);
+
+      return new Response(
+        JSON.stringify({
+          products,
+          pagination: {
+            currentPage: page,
+            totalPages,
+            totalProducts,
+            limit,
+            hasNextPage: page < totalPages,
+            hasPrevPage: page > 1,
+          },
+        }),
+        { status: 200 }
+      );
+    }
 
     if (_id && getRelated) {
       // Fetch the main product first to get its category

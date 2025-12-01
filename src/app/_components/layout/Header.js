@@ -98,6 +98,7 @@ export default function Header() {
   const [showDropDown, setShowDropDown] = useState(false);
   const [error, setError] = useState(false);
   const mobileMenuRef = useRef(null);
+  const toggleButtonRef = useRef(null);
 
   if (userName && userName.includes(" ")) {
     userName = userName.split(" ")[0];
@@ -167,7 +168,12 @@ export default function Header() {
   // Handle click outside to close mobile menu
   useEffect(() => {
     function handleClickOutside(event) {
-      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target) &&
+        toggleButtonRef.current &&
+        !toggleButtonRef.current.contains(event.target) // Exclude toggle button
+      ) {
         setMobileNavOpen(false);
       }
     }
@@ -205,12 +211,11 @@ export default function Header() {
             {adminLoading && <Spinner size="sm" />}
           </div>
           <button
+            ref={toggleButtonRef}
             className="p-1 border"
             onClick={() => {
-              setMobileNavOpen((prev) => {
-                if (!prev) setShowSidebarContext(false);
-                return !prev;
-              });
+              setMobileNavOpen((prev) => !prev);
+              setShowSidebarContext(false);
             }}
           >
             <Bars2 />
@@ -427,33 +432,33 @@ export default function Header() {
             {adminLoading ? (
               <Spinner size="md" />
             ) : isAdmin ? (
-            <>
-              <Link
-                href={"/dashboard"}
-                className="flex items-center text-[15px] gap-2 bg-white rounded-[5px] text-primary px-2 py-2"
-              >
-                <Image
-                  width={20}
-                  height={20}
-                  alt="dashboard icon"
-                  src={"/dashboard.svg"}
-                />
-                Dashboard
-              </Link>
-              <button
-                onClick={() => signOut()}
-                className="bg-white rounded-[5px] text-primary text-[15px] px-4 py-2"
-              >
-                Abmelden
-              </button>
-            </>
-          ) : (
-            <AuthLinks
-              status={status}
-              userName={userName}
-              image={userData?.image}
-            />
-          )}
+              <>
+                <Link
+                  href={"/dashboard"}
+                  className="flex items-center text-[15px] gap-2 bg-white rounded-[5px] text-primary px-2 py-2"
+                >
+                  <Image
+                    width={20}
+                    height={20}
+                    alt="dashboard icon"
+                    src={"/dashboard.svg"}
+                  />
+                  Dashboard
+                </Link>
+                <button
+                  onClick={() => signOut()}
+                  className="bg-white rounded-[5px] text-primary text-[15px] px-4 py-2"
+                >
+                  Abmelden
+                </button>
+              </>
+            ) : (
+              <AuthLinks
+                status={status}
+                userName={userName}
+                image={userData?.image}
+              />
+            )}
           </div>
 
           <div
