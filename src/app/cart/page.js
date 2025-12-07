@@ -43,6 +43,8 @@ export default function CartPage() {
   const [minimumOrder, setMinimumOrder] = useState(undefined);
   const [disabled, setDisabled] = useState(false);
   const [insideGermany, setInsideGermany] = useState(false);
+  // ✅ NEW: Add state for PayPal Client ID
+  const [paypalClientId, setPaypalClientId] = useState(null);
 
   let totalPrice = 0;
   for (const p of cartProducts) {
@@ -63,6 +65,22 @@ export default function CartPage() {
         toast.error("Zahlung fehlgeschlagen!");
       }
     }
+  }, []);
+
+  // ✅ NEW: Fetch PayPal Client ID from backend
+  useEffect(() => {
+    const fetchPayPalConfig = async () => {
+      try {
+        const response = await fetch("/api/paypal-config");
+        if (!response.ok) throw new Error("Failed to fetch PayPal config");
+        const data = await response.json();
+        setPaypalClientId(data.clientId);
+      } catch (error) {
+        console.error("Error fetching PayPal config:", error);
+        toast.error("PayPal-Konfiguration konnte nicht geladen werden");
+      }
+    };
+    fetchPayPalConfig();
   }, []);
 
   useEffect(() => {
@@ -118,21 +136,17 @@ export default function CartPage() {
     }
   }, [profileData]);
 
-  console.log(reachMinimumOreder, "ordermini");
-
   function handleAddressChange(propName, value) {
     setAddress((prevAddress) => ({ ...prevAddress, [propName]: value }));
   }
 
   const requiredFields = ["name", "email", "phone", "streetAdress"];
-
   const pickupRequiredFields = ["name", "email", "phone"];
 
   const isComplete =
     orderType === "delivery"
       ? requiredFields.every((field) => address[field])
       : pickupRequiredFields.every((field) => address[field]);
-  console.log(isComplete);
 
   async function proceedToCheckout(ev) {
     ev.preventDefault();
@@ -182,8 +196,6 @@ export default function CartPage() {
     );
   }
 
-  console.log(cartProducts);
-
   if (cartProducts?.length === 0) {
     return (
       <section className="mt-24 text-center">
@@ -197,6 +209,7 @@ export default function CartPage() {
       </section>
     );
   }
+
   return (
     <section className="mt-10 max-w-4xl mx-auto">
       <div className="text-center">
@@ -290,8 +303,8 @@ export default function CartPage() {
                       {finalTotalPrice && finalTotalPrice + " €"}
                     </button>
                   ) : selectedPaymentMethod === "paypal" ? (
-                    <div className="relatie z-1 mt-4">
-                      {!loadingDeliveryPrices && (
+                    <div className="relative z-1 mt-4">
+                      {!loadingDeliveryPrices && paypalClientId && (
                         <div className="relative">
                           <button
                             disabled={!isComplete || disabled}
@@ -305,8 +318,7 @@ export default function CartPage() {
                             {isComplete && (
                               <PayPalScriptProvider
                                 options={{
-                                  "client-id":
-                                    process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
+                                  clientId: paypalClientId, // ✅ CHANGED: Use fetched client ID
                                   currency: "EUR",
                                 }}
                               >
@@ -321,23 +333,45 @@ export default function CartPage() {
                                   fundingSource={FUNDING.PAYPAL}
                                   style={{ layout: "vertical", color: "blue" }}
                                   createOrder={async () => {
-                                    const res = await fetch("api/paypal", {
-                                      method: "POST",
-                                      body: JSON.stringify({
-                                        cartProducts,
-                                        address,
-                                        subtotal: totalPrice,
-                                        deliveryPrice: deliveryPrice,
-                                        orderType,
-                                      }),
-                                    });
-                                    const order = await res.json();
-                                    return order.paypalOrderId;
+                                    try {
+                                      setDisabled(true); // ✅ ADDED: Disable during order creation
+                                      const res = await fetch("/api/paypal", {
+                                        method: "POST",
+                                        headers: {
+                                          "Content-Type": "application/json", // ✅ ADDED: Proper headers
+                                        },
+                                        body: JSON.stringify({
+                                          cartProducts,
+                                          address,
+                                          subtotal: totalPrice,
+                                          deliveryPrice: deliveryPrice,
+                                          orderType,
+                                        }),
+                                      });
+
+                                      // ✅ ADDED: Better error handling
+                                      if (!res.ok) {
+                                        const errorData = await res.json();
+                                        throw new Error(
+                                          errorData.error || "Bestellung fehlgeschlagen"
+                                        );
+                                      }
+
+                                      const order = await res.json();
+                                      return order.paypalOrderId;
+                                    } catch (error) {
+                                      setDisabled(false);
+                                      toast.error(error.message || "Fehler beim Erstellen der Bestellung");
+                                      throw error;
+                                    }
                                   }}
                                   onApprove={async (data) => {
                                     try {
                                       const res = await fetch("/api/capture", {
                                         method: "POST",
+                                        headers: {
+                                          "Content-Type": "application/json", // ✅ ADDED: Proper headers
+                                        },
                                         body: JSON.stringify({
                                           paypalOrderId: data.orderID,
                                         }),
@@ -345,29 +379,38 @@ export default function CartPage() {
                                       const result = await res.json();
 
                                       if (res.ok) {
-                                        // Redirect to success URL
                                         toast.success("Zahlung erfolgreich");
-                                        window.location.href =
-                                          result.successUrl;
+                                        window.location.href = result.successUrl;
                                       } else {
                                         throw new Error(
-                                          result.message ||
-                                            "Error capturing order"
+                                          result.error || result.message || "Error capturing order"
                                         );
                                       }
                                     } catch (error) {
-                                      toast.error("Error capturing payment");
+                                      setDisabled(false);
+                                      toast.error("Fehler bei der Zahlungsabwicklung");
                                       console.error(error);
                                     }
                                   }}
-                                  onCancel={(data) => {}}
-                                  onError={() =>
-                                    toast.error("PayPal-Zahlung fehlgeschlagen")
-                                  }
+                                  onCancel={(data) => {
+                                    setDisabled(false); // ✅ ADDED: Re-enable on cancel
+                                    toast.error("Zahlung abgebrochen");
+                                  }}
+                                  onError={(err) => {
+                                    setDisabled(false); // ✅ ADDED: Re-enable on error
+                                    toast.error("PayPal-Zahlung fehlgeschlagen");
+                                    console.error("PayPal Error:", err);
+                                  }}
                                 />
                               </PayPalScriptProvider>
                             )}
                           </div>
+                        </div>
+                      )}
+                      {/* ✅ ADDED: Loading state while fetching client ID */}
+                      {!paypalClientId && (
+                        <div className="text-center py-4">
+                          <Spinner />
                         </div>
                       )}
                     </div>

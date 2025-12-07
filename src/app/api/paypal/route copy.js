@@ -6,37 +6,28 @@ import { DeliveryPrice } from "@/app/models/DeliverPrices";
 import { ProductItem } from "@/app/models/productItem";
 import paypal from "@paypal/checkout-server-sdk";
 
-const clientId = process.env.PAYPAL_CLIENT_ID;
-const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+const clientSecret = process.env.NEXT_PAYPAL_CLIENT_SECRET;
 
-// Validate credentials exist
-if (!clientId || !clientSecret) {
-  throw new Error('PayPal credentials are not configured. Check your .env file.');
-}
-
-// Live environment
 const environment = new paypal.core.LiveEnvironment(clientId, clientSecret);
 const client = new paypal.core.PayPalHttpClient(environment);
 
 export async function POST(req) {
   try {
-    await mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
 
     const { cartProducts, address, subtotal, deliveryPrice, orderType } =
       await req.json();
 
     // Step 1: Validate and sanitize address fields
     if (!address.name || !address.email || !address.phone || !address.streetAdress) {
-      return Response.json(
-        { error: "Missing required address fields" },
-        { status: 400 }
-      );
+      return new Response("Missing required address fields", { status: 400 });
     }
     if (!validator.isEmail(address.email)) {
-      return Response.json(
-        { error: "Invalid email format" },
-        { status: 400 }
-      );
+      return new Response("Invalid email format", { status: 400 });
     }
 
     const sanitizedAddress = {
@@ -49,10 +40,7 @@ export async function POST(req) {
 
     // Step 2: Validate order type
     if (!["delivery"].includes(orderType)) {
-      return Response.json(
-        { error: "Invalid order type" },
-        { status: 400 }
-      );
+      return new Response("Invalid order type", { status: 400 });
     }
 
     let cityDeliveryInfo;
@@ -65,10 +53,7 @@ export async function POST(req) {
 
       if (cityDeliveryInfo.isFreeDelivery && deliveryPrice > 0) {
         console.error("Delivery should be free for this city:", deliveryPrice);
-        return Response.json(
-          { error: "Delivery is free for this city" },
-          { status: 400 }
-        );
+        return new Response("Delivery is free for this city", { status: 400 });
       }
 
       if (!cityDeliveryInfo.isFreeDelivery && deliveryPrice === 0) {
@@ -76,13 +61,11 @@ export async function POST(req) {
           "Delivery price required for non-free delivery city:",
           deliveryPrice
         );
-        return Response.json(
-          { error: "Delivery is not free for this city" },
-          { status: 400 }
-        );
+        return new Response("Delivery is not free for this city", {
+          status: 400,
+        });
       }
     }
-    
     let finalTotalPrice;
     let computedDeliveryPrice;
     if (orderType === "delivery") {
@@ -97,31 +80,28 @@ export async function POST(req) {
       _id: { $in: cartProducts.map((item) => item._id) },
     }).lean();
 
+
     let calculatedSubtotal = 0;
     const sanitizedCartProducts = [];
 
-    // Create Map for O(1) lookup performance
-    const menuItemsMap = new Map(
-      menuItems.map(item => [item._id.toString(), item])
-    );
-
     for (const product of cartProducts) {
-      const menuItem = menuItemsMap.get(product._id);
+      const menuItem = menuItems.find(
+        (item) => item._id.toString() === product._id
+      );
 
       if (!menuItem) {
         console.error("Product not found in database:", product._id);
-        return Response.json(
-          { error: `Product with _id ${product._id} does not exist in the database` },
+        return new Response(
+          `Product with _id ${product._id} does not exist in the database`,
           { status: 400 }
         );
       }
 
       if (menuItem.price !== parseFloat(product.price)) {
         console.error("Price mismatch for product:", product);
-        return Response.json(
-          { error: `Price mismatch for product ${product.name}` },
-          { status: 400 }
-        );
+        return new Response(`Price mismatch for product ${product.name}`, {
+          status: 400,
+        });
       }
 
       let productTotal = menuItem.price * (product.quantity || 1);
@@ -139,8 +119,8 @@ export async function POST(req) {
             product.size,
             product.name
           );
-          return Response.json(
-            { error: `Invalid size '${product.size.name}' for product ${product.name}` },
+          return new Response(
+            `Invalid size '${product.size.name}' for product ${product.name}`,
             { status: 400 }
           );
         }
@@ -148,11 +128,31 @@ export async function POST(req) {
         productTotal += selectedSize.price * (product.quantity || 1);
       }
 
+      // if (product.extras && product.extras.length > 0) {
+      //   for (const extra of product.extras) {
+      //     const selectedExtra = menuItem.extraIngredientPrice.find(
+      //       (menuExtra) =>
+      //         menuExtra._id.toString() === extra._id &&
+      //         menuExtra.price === extra.price
+      //     );
+
+      //     if (!selectedExtra) {
+      //       console.error("Invalid extra for product:", extra, product.name);
+      //       return new Response(
+      //         `Invalid extra '${extra.name}' for product ${product.name}`,
+      //         { status: 400 }
+      //       );
+      //     }
+
+      //     productTotal += selectedExtra.price;
+      //   }
+      // }
+
       calculatedSubtotal += productTotal;
 
       sanitizedCartProducts.push({
         _id: product._id,
-        bannerImage: product.bannerImage, // Don't sanitize URLs
+        bannerImage: sanitizeHtml(product.bannerImage),
         name: sanitizeHtml(product.name),
         description: sanitizeHtml(product.description),
         category: product.category,
@@ -172,8 +172,8 @@ export async function POST(req) {
         "Provided:",
         subtotal
       );
-      return Response.json(
-        { error: `Subtotal mismatch. Calculated: ${calculatedSubtotal}, Provided: ${subtotal}` },
+      return new Response(
+        `Subtotal mismatch. Calculated: ${calculatedSubtotal}, Provided: ${subtotal}`,
         { status: 400 }
       );
     }
@@ -219,19 +219,7 @@ export async function POST(req) {
       paypalOrderId: paypalResponse.result.id,
     });
   } catch (error) {
-    console.error('Order creation error:', error);
-    
-    // Better error handling
-    if (error.statusCode === 401) {
-      return Response.json(
-        { error: 'PayPal authentication failed. Check your credentials.' },
-        { status: 500 }
-      );
-    }
-    
-    return Response.json(
-      { error: 'Failed to process order' },
-      { status: 500 }
-    );
+    console.error(error);
+    return new Response("Internal Server Error", { status: 500 });
   }
 }
