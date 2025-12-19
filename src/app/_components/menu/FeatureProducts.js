@@ -12,7 +12,7 @@ export default function FeaturedProducts({ menu, categories }) {
   const latestProducts = menu.slice(0, 10);
 
   return (
-    <section className="featured-products py-4 px-4 max-w-7xl mx-auto mt-10">
+    <section className="featured-products pt-4 pb-8 px-4 max-w-7xl mx-auto mt-10">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-[#222] text-left font-bold text-3xl md:text-4xl">
           Neue Produkte
@@ -62,7 +62,7 @@ export default function FeaturedProducts({ menu, categories }) {
         className="featured-swiper"
       >
         {latestProducts.map((item, index) => (
-          <SwiperSlide key={`${item._id}-${index}`} className="pb-12 pt-10">
+          <SwiperSlide key={`${item._id}-${index}`} className="pb-8 pt-10">
             <MenuItem
               menuItemInfo={item}
               category={

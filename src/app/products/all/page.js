@@ -5,11 +5,13 @@ export default async function Page() {
   let categories = [];
 
   try {
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+
     const [menuRes, categoryRes] = await Promise.all([
-      fetch(`/api/products`, {
+      fetch(`${baseUrl}/api/products`, {
         cache: "no-store",
       }),
-      fetch(`/api/categories`, {
+      fetch(`${baseUrl}/api/categories`, {
         cache: "no-store",
       }),
     ]);
@@ -25,7 +27,7 @@ export default async function Page() {
       <h1 className="text-[#222] text-left font-bold text-2xl md:text-2xl mb-2 sm:mt-14 p-5 max-w-6xl mx-auto">
         Alle Produkte
       </h1>
-      <FilteredMenu menu={menu} categories={categories} />;
+      <FilteredMenu menu={menu} categories={categories} />
     </>
   );
 }
