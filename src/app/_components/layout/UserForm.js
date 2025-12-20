@@ -12,7 +12,7 @@ export default function UserForm({ user, onSave, isAdmin = false }) {
   const [city, setCity] = useState(user?.city || "");
   const [cityInfo, setCityInfo] = useState([]);
   const [admin, setAdmin] = useState(user?.admin || false);
-  const [verified, setVerified] = useState(user?.verified || false);
+  const [isVerified, setIsVerified] = useState(user?.isVerified || false);
   const [citiesWithDeliveryPrices, setCitiesWithDeliveryPrices] = useState([]);
 
   useEffect(() => {
@@ -79,7 +79,7 @@ export default function UserForm({ user, onSave, isAdmin = false }) {
               streetAdress,
               postalCode,
               city,
-              ...(isAdmin ? { admin, verified } : {}),
+              ...(isAdmin ? { admin, isVerified } : {}),
             })
           }
         >
@@ -153,7 +153,6 @@ export default function UserForm({ user, onSave, isAdmin = false }) {
                     <input
                       id="admin"
                       type="checkbox"
-                      value={"1"}
                       checked={admin}
                       onChange={(e) => setAdmin(e.target.checked)}
                     />
@@ -162,15 +161,14 @@ export default function UserForm({ user, onSave, isAdmin = false }) {
                 </div>
                 <div>
                   <label
-                    htmlFor="verified"
+                    htmlFor="isVerified"
                     className="inline-flex items-center gap-2 p-2 mb-2"
                   >
                     <input
-                      id="verified"
+                      id="isVerified"
                       type="checkbox"
-                      value={"1"}
-                      checked={verified}
-                      onChange={(e) => setVerified(e.target.checked)}
+                      checked={isVerified}
+                      onChange={(e) => setIsVerified(e.target.checked)}
                     />
                     <span>Verifiziert</span>
                   </label>
