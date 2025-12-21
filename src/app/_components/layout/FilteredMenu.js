@@ -41,15 +41,19 @@ function FilteredMenuContent({ categories }) {
   };
 
   const handlePageChange = (newPage) => {
-    // Fade out animation
-    setFadeOut(true);
-    
-    // Wait for fade out, then update page and scroll
-    setTimeout(() => {
-      setCurrentPage(newPage);
-      updateUrl(newPage, searchQuery, activeCategory);
+    if (newPage !== currentPage) {
+      // Show skeleton effect when changing pages
+      setFadeOut(true);
+      
+      setTimeout(() => {
+        setCurrentPage(newPage);
+        updateUrl(newPage, searchQuery, activeCategory);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 200);
+    } else {
+      // Just scroll up if clicking the same page
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 200);
+    }
   };
 
   const handleSearchChange = (value) => {

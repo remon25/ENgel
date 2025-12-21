@@ -65,10 +65,10 @@ export default function MenuItemOld({ menuItemInfo, category }) {
                 </svg>
               </div>
             </div>
-            <div className="text-sm text-gray-800">
+            {/* <div className="text-sm text-gray-800">
               {highestPrice &&
                 price + "€" + " - " + (highestPrice + price) + "€"}
-            </div>
+            </div> */}
           </div>
         </Link>
       </div>
