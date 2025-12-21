@@ -26,6 +26,7 @@ export default function ProductForm({
     productItem?.extraIngredientPrice || []
   );
   const [categories, setCategories] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     fetch("/api/categories")
@@ -55,25 +56,40 @@ export default function ProductForm({
     setExtraIngredientPrice([]);
   }
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Prevent double submission
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+
+    try {
+      await handleFormSubmit(e, {
+        code,
+        bannerImage,
+        moreImages,
+        name,
+        price,
+        beforeSalePrice,
+        stock,
+        description,
+        category,
+        sizes,
+        extraIngredientPrice,
+      });
+
+      // Only reset form after successful submission
+      if (!editForm) {
+        resetForm();
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <form
-      className="mt-8 p-4"
-      onSubmit={(e) => {
-        handleFormSubmit(e, {
-          code,
-          bannerImage,
-          moreImages,
-          name,
-          price,
-          beforeSalePrice,
-          stock,
-          description,
-          category,
-          sizes,
-          extraIngredientPrice,
-        }).then(!editForm ? resetForm() : null);
-      }}
-    >
+    <form className="mt-8 p-4" onSubmit={handleSubmit}>
       <div className="flex flex-col md:flex-row gap-2 items-center md:items-start">
         {/* Banner Image Upload */}
         <div className="w-full flex items-start gap-2 md:w-auto justify-center">
@@ -97,7 +113,8 @@ export default function ProductForm({
               {({ open }) => (
                 <button
                   type="button"
-                  className="block border border-gray-300 mt-2 cursor-pointer rounded-lg p-2 text-[0.7rem] text-center"
+                  disabled={isSubmitting}
+                  className="block border border-gray-300 mt-2 cursor-pointer rounded-lg p-2 text-[0.7rem] text-center disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => open()}
                 >
                   Upload Banner Image
@@ -120,7 +137,8 @@ export default function ProductForm({
               />
               <button
                 type="button"
-                className="absolute top-0 right-0 bg-red-500 text-white text-sm rounded-full px-1"
+                disabled={isSubmitting}
+                className="absolute top-0 right-0 bg-red-500 text-white text-sm rounded-full px-1 disabled:opacity-50"
                 onClick={() => handleRemoveImage(index)}
               >
                 ✕
@@ -130,18 +148,16 @@ export default function ProductForm({
           <CldUploadWidget
             options={{
               sources: ["local"],
-              maxFiles: 7 - moreImages.length, // Limit to 7 images
+              maxFiles: 7 - moreImages.length,
               resourceType: "image",
             }}
             onSuccess={(results) => {
               if (Array.isArray(results)) {
-                // If results is an array, map and add to state
                 setMoreImages((prev) => [
                   ...prev,
                   ...results.map((result) => result?.info?.secure_url),
                 ]);
               } else if (results?.info?.secure_url) {
-                // If results is a single object, add directly to state
                 setMoreImages((prev) => [...prev, results.info.secure_url]);
               } else {
                 console.error("Unexpected results format:", results);
@@ -152,7 +168,8 @@ export default function ProductForm({
             {({ open }) => (
               <button
                 type="button"
-                className="block border border-gray-300 mt-2 cursor-pointer rounded-lg p-2 text-[0.7rem] text-center"
+                disabled={isSubmitting}
+                className="block border border-gray-300 mt-2 cursor-pointer rounded-lg p-2 text-[0.7rem] text-center disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => open()}
               >
                 Upload More Images
@@ -169,6 +186,7 @@ export default function ProductForm({
             type="text"
             placeholder="Product Name"
             value={name}
+            disabled={isSubmitting}
             onChange={(e) => setName(e.target.value)}
           />
           <label htmlFor="description">Description</label>
@@ -177,12 +195,14 @@ export default function ProductForm({
             type="text"
             placeholder="Description"
             value={description}
+            disabled={isSubmitting}
             onChange={(e) => setDescription(e.target.value)}
           />
           <label htmlFor="category">Category</label>
           <select
             id="category"
             value={category}
+            disabled={isSubmitting}
             onChange={(e) => setCategory(e.target.value)}
           >
             {categories &&
@@ -192,38 +212,42 @@ export default function ProductForm({
                 </option>
               ))}
           </select>
-          <label htmlFor="price">Code</label>
+          <label htmlFor="code">Code</label>
           <input
-            id="price"
+            id="code"
             type="text"
             placeholder="code"
             value={code}
+            disabled={isSubmitting}
             onChange={(e) => setCode(e.target.value)}
           />
-          <label htmlFor="price">Base Price</label>
+          <label htmlFor="basePrice">Base Price</label>
           <input
-            id="price"
+            id="basePrice"
             type="number"
             placeholder="Price"
             value={price}
+            disabled={isSubmitting}
             onChange={(e) => setPrice(e.target.value)}
           />
 
-          <label htmlFor="price">Before sale price</label>
+          <label htmlFor="beforeSalePrice">Before sale price</label>
           <input
-            id="before-sale-price"
+            id="beforeSalePrice"
             type="number"
             placeholder="Before sale price"
             value={beforeSalePrice}
+            disabled={isSubmitting}
             onChange={(e) => setBeforeSalePrice(e.target.value)}
           />
 
-          <label htmlFor="price">Stock</label>
+          <label htmlFor="stock">Stock</label>
           <input
             id="stock"
             type="number"
             placeholder="Stock"
             value={stock}
+            disabled={isSubmitting}
             onChange={(e) => setStock(e.target.value)}
           />
 
@@ -232,16 +256,15 @@ export default function ProductForm({
             name={"Größen"}
             props={sizes}
             setProps={setSizes}
+            disabled={isSubmitting}
           />
-          {/* <ProductItemPriceProps
-            addLabel={"Zusätzliche Zutat hinzufügen"}
-            name={"Zusätzliche Zutat"}
-            props={extraIngredientPrice}
-            setProps={setExtraIngredientPrice}
-          /> */}
 
-          <button className="rounded-xl p-2" type="submit">
-            Save
+          <button 
+            className="rounded-xl p-2 disabled:opacity-50 disabled:cursor-not-allowed" 
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Speichern..." : "Save"}
           </button>
         </div>
       </div>
