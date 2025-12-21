@@ -49,6 +49,7 @@ export default function ProductForm({
     setName("");
     setPrice("");
     setBeforeSalePrice("");
+    setCode("");
     setStock("");
     setDescription("");
     setSizes([]);
