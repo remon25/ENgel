@@ -4,11 +4,9 @@ import { authOptions } from "../auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 import { User } from "../../models/User";
 
-if (!mongoose.connection.readyState) {
-  mongoose.connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
+// Mongoose 8.7.0 connection - removed deprecated options
+if (mongoose.connection.readyState === 0) {
+  mongoose.connect(process.env.MONGO_URL);
 }
 
 async function checkAdmin(req) {
@@ -23,10 +21,9 @@ async function checkAdmin(req) {
   }
 }
 
-
 export async function POST(req) {
   try {
-    await checkAdmin(req); 
+    await checkAdmin(req);
 
     const { name } = await req.json();
     const categoryDoc = await Category.create({ name });
@@ -43,7 +40,7 @@ export async function POST(req) {
 
 export async function PUT(req) {
   try {
-    await checkAdmin(req); 
+    await checkAdmin(req);
 
     const { name, _id } = await req.json();
     await Category.updateOne({ _id }, { name });
@@ -72,7 +69,7 @@ export async function GET() {
 
 export async function DELETE(req) {
   try {
-    await checkAdmin(req); 
+    await checkAdmin(req);
 
     const url = new URL(req.url);
     const _id = url.searchParams.get("_id");

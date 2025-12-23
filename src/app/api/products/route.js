@@ -1,15 +1,35 @@
+
+// ========== UTILS FOR CONNECTION MANAGEMENT ==========
+async function ensureMongooseConnected() {
+  if (mongoose.connection.readyState === 0) {
+    try {
+      await mongoose.connect(process.env.MONGO_URL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+    } catch (error) {
+      console.error("MongoDB connection error:", error);
+      throw new Error("Database connection failed");
+    }
+  }
+  
+  // If connecting (state 1), wait for it
+  if (mongoose.connection.readyState === 1) {
+    return;
+  }
+  
+  // If disconnecting/disconnected but not connecting, try again
+  if (mongoose.connection.readyState === 3) {
+    return ensureMongooseConnected();
+  }
+}
+
+// ========== PRODUCTS API ROUTE ==========
 import mongoose from "mongoose";
 import { ProductItem } from "../../models/productItem";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 import { User } from "@/app/models/User";
-
-if (!mongoose.connection.readyState) {
-  mongoose.connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-}
 
 async function checkAdmin(req) {
   const session = await getServerSession(authOptions);
@@ -25,6 +45,7 @@ async function checkAdmin(req) {
 
 export async function POST(req) {
   try {
+    await ensureMongooseConnected();
     await checkAdmin(req);
 
     const data = await req.json();
@@ -32,9 +53,10 @@ export async function POST(req) {
 
     return new Response(JSON.stringify(ProductItemDoc), { status: 201 });
   } catch (error) {
+    console.error("POST error:", error);
     const status = error.message === "Unauthorized" ? 401 : 403;
     return new Response(
-      JSON.stringify({ error: error.message || "Failed to create menu item" }),
+      JSON.stringify({ error: error.message || "Failed to create product" }),
       { status: error.message ? status : 500 }
     );
   }
@@ -42,6 +64,7 @@ export async function POST(req) {
 
 export async function PUT(req) {
   try {
+    await ensureMongooseConnected();
     await checkAdmin(req);
 
     const { _id, ...data } = await req.json();
@@ -49,11 +72,19 @@ export async function PUT(req) {
       new: true,
     });
 
+    if (!updatedItem) {
+      return new Response(
+        JSON.stringify({ error: "Product not found" }),
+        { status: 404 }
+      );
+    }
+
     return new Response(JSON.stringify(updatedItem), { status: 200 });
   } catch (error) {
+    console.error("PUT error:", error);
     const status = error.message === "Unauthorized" ? 401 : 403;
     return new Response(
-      JSON.stringify({ error: error.message || "Failed to update menu item" }),
+      JSON.stringify({ error: error.message || "Failed to update product" }),
       { status: error.message ? status : 500 }
     );
   }
@@ -61,26 +92,53 @@ export async function PUT(req) {
 
 export async function GET(req) {
   try {
-    if (!mongoose.connection.readyState) {
-      await mongoose.connect(process.env.MONGO_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-    }
+    await ensureMongooseConnected();
 
     const url = new URL(req.url);
     const _id = url.searchParams.get("_id");
     const getRelated = url.searchParams.get("related");
     const categoryId = url.searchParams.get("category");
     
-    // Pagination parameters
     const page = parseInt(url.searchParams.get("page")) || 1;
     const limit = parseInt(url.searchParams.get("limit")) || 12;
     const searchQuery = url.searchParams.get("search") || "";
     const isPaginated = url.searchParams.get("paginated") === "true";
 
+    // Single product with related items
+    if (_id && getRelated) {
+      const mainProduct = await ProductItem.findById(_id);
+      if (!mainProduct) {
+        return new Response(JSON.stringify({ error: "Product not found" }), {
+          status: 404,
+        });
+      }
+
+      const relatedProducts = await ProductItem.aggregate([
+        {
+          $match: {
+            category: new mongoose.Types.ObjectId(mainProduct.category),
+            _id: { $ne: new mongoose.Types.ObjectId(_id) },
+          },
+        },
+        { $sample: { size: 4 } },
+      ]);
+
+      return new Response(JSON.stringify(relatedProducts), { status: 200 });
+    }
+
+    // Single product by ID
+    if (_id) {
+      const productItem = await ProductItem.findById(_id);
+      if (!productItem) {
+        return new Response(JSON.stringify({ error: "Product not found" }), {
+          status: 404,
+        });
+      }
+      return new Response(JSON.stringify(productItem), { status: 200 });
+    }
+
+    // Paginated search with category and search query
     if (isPaginated) {
-      // Server-side pagination endpoint
       const skip = (page - 1) * limit;
       const query = {};
 
@@ -117,25 +175,30 @@ export async function GET(req) {
       );
     }
 
-    if (categoryId && !searchQuery && !isPaginated) {
-      // Fetch products by category with pagination (new endpoint)
+    // Products by category with pagination
+    if (categoryId) {
       const skip = (page - 1) * limit;
-
-      // Verify category exists
-      const categoryExists = await ProductItem.findOne({
-        category: new mongoose.Types.ObjectId(categoryId),
-      });
-
-      if (!categoryExists) {
-        return new Response(
-          JSON.stringify({ error: "Category not found" }),
-          { status: 404 }
-        );
-      }
 
       const totalProducts = await ProductItem.countDocuments({
         category: new mongoose.Types.ObjectId(categoryId),
       });
+
+      if (totalProducts === 0) {
+        return new Response(
+          JSON.stringify({
+            products: [],
+            pagination: {
+              currentPage: page,
+              totalPages: 0,
+              totalProducts: 0,
+              limit,
+              hasNextPage: false,
+              hasPrevPage: false,
+            },
+          }),
+          { status: 200 }
+        );
+      }
 
       const products = await ProductItem.find({
         category: new mongoose.Types.ObjectId(categoryId),
@@ -163,52 +226,19 @@ export async function GET(req) {
       );
     }
 
-    if (_id && getRelated) {
-      // Fetch the main product first to get its category
-      const mainProduct = await ProductItem.findById(_id);
-      if (!mainProduct) {
-        return new Response(JSON.stringify({ error: "Product not found" }), {
-          status: 404,
-        });
-      }
-
-      // Fetch 4 random related products from the same category, excluding the current product
-      const relatedProducts = await ProductItem.aggregate([
-        {
-          $match: {
-            category: new mongoose.Types.ObjectId(mainProduct.category),
-            _id: { $ne: new mongoose.Types.ObjectId(_id) },
-          },
-        },
-        { $sample: { size: 4 } },
-      ]);
-
-      return new Response(JSON.stringify(relatedProducts), { status: 200 });
-    } else if (_id) {
-      const productItem = await ProductItem.findById(_id);
-      if (!productItem) {
-        return new Response(JSON.stringify({ error: "Product not found" }), {
-          status: 404,
-        });
-      }
-      return new Response(JSON.stringify(productItem), { status: 200 });
-    } else if (categoryId) {
-      if (categoryId) {
-        const products = await ProductItem.find({
-          category: categoryId,
-        }).populate("category");
-        return new Response(JSON.stringify(products), { status: 200 });
-      } else {
-        const products = await ProductItem.find().populate("category");
-        return new Response(JSON.stringify(products), { status: 200 });
-      }
-    } else {
-      const productItems = await ProductItem.find();
-      return new Response(JSON.stringify(productItems), { status: 200 });
-    }
+    // All products
+    const productItems = await ProductItem.find()
+      .populate("category")
+      .sort({ createdAt: -1 });
+    
+    return new Response(JSON.stringify(productItems), { status: 200 });
   } catch (error) {
+    console.error("GET error:", error);
     return new Response(
-      JSON.stringify({ error: "Failed to fetch product(s)" }),
+      JSON.stringify({ 
+        error: "Failed to fetch products",
+        details: process.env.NODE_ENV === "development" ? error.message : undefined
+      }),
       { status: 500 }
     );
   }
@@ -216,17 +246,27 @@ export async function GET(req) {
 
 export async function DELETE(req) {
   try {
+    await ensureMongooseConnected();
     await checkAdmin(req);
 
     const url = new URL(req.url);
     const _id = url.searchParams.get("_id");
-    await ProductItem.deleteOne({ _id });
+    
+    const result = await ProductItem.deleteOne({ _id });
+    
+    if (result.deletedCount === 0) {
+      return new Response(
+        JSON.stringify({ error: "Product not found" }),
+        { status: 404 }
+      );
+    }
 
-    return new Response(JSON.stringify(true), { status: 200 });
+    return new Response(JSON.stringify({ success: true }), { status: 200 });
   } catch (error) {
+    console.error("DELETE error:", error);
     const status = error.message === "Unauthorized" ? 401 : 403;
     return new Response(
-      JSON.stringify({ error: error.message || "Failed to delete menu item" }),
+      JSON.stringify({ error: error.message || "Failed to delete product" }),
       { status: error.message ? status : 500 }
     );
   }
