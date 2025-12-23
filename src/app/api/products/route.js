@@ -1,12 +1,8 @@
-
 // ========== UTILS FOR CONNECTION MANAGEMENT ==========
 async function ensureMongooseConnected() {
   if (mongoose.connection.readyState === 0) {
     try {
-      await mongoose.connect(process.env.MONGO_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
+      await mongoose.connect(process.env.MONGO_URL);
     } catch (error) {
       console.error("MongoDB connection error:", error);
       throw new Error("Database connection failed");
@@ -27,6 +23,7 @@ async function ensureMongooseConnected() {
 // ========== PRODUCTS API ROUTE ==========
 import mongoose from "mongoose";
 import { ProductItem } from "../../models/productItem";
+import { Category } from "../../models/Category"; // ADD THIS LINE
 import { authOptions } from "../auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 import { User } from "@/app/models/User";
