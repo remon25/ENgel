@@ -1,5 +1,5 @@
 export async function getAddressAutocomplete(query) {
-  const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(query)}&key=a886a320d38547b3b677c82d611d0ca1`;
+  const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(query)}&key=65cb07d07721438bb8516dfa12653d6c`;
 
   const response = await fetch(url);
   const data = await response.json();
