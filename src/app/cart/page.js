@@ -423,7 +423,7 @@ export default function CartPage() {
                         className="button Dialog_button"
                       >
                         Bestellen & Bezahlen{" "}
-                        {finalTotalPrice && finalTotalPrice + " €"}
+                        {Number(finalTotalPrice).toFixed(3) && Number(finalTotalPrice).toFixed(3) + " €"}
                       </button>
                     </div>
                   )
