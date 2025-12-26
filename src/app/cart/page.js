@@ -300,7 +300,7 @@ export default function CartPage() {
                       type="submit"
                     >
                       Bestellen & Bezahlen{" "}
-                      {finalTotalPrice && finalTotalPrice + " €"}
+                      {Number(finalTotalPrice).toFixed(3) && Number(finalTotalPrice).toFixed(3) + " €"}
                     </button>
                   ) : selectedPaymentMethod === "paypal" ? (
                     <div className="relative z-1 mt-4">
@@ -312,7 +312,7 @@ export default function CartPage() {
                             className="button Dialog_button"
                           >
                             Bestellen & Bezahlen{" "}
-                            {finalTotalPrice && finalTotalPrice + " €"}
+                            {Number(finalTotalPrice).toFixed(3) && Number(finalTotalPrice).toFixed(3) + " €"}
                           </button>
                           <div className="absolute top-0 right-0 left-0 bottom-0 opacity-0">
                             {isComplete && (
