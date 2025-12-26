@@ -137,7 +137,7 @@ function OrderPage() {
                       "Kostenlos"}
                     {order?.deliveryPrice !== 0 && order?.deliveryPrice + "€"}
                     {order?.deliveryPrice == null &&
-                      rder?.deliveryPrice == undefined &&
+                      order?.deliveryPrice == undefined &&
                       "_"}
                   </span>
                   <br />

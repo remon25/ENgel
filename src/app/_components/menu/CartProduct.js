@@ -45,7 +45,7 @@ export default function CartProduct({
         )}
       </div>
       <div className="text-[13px] font-bold text-nowrap">
-        {cartProductPrice(product)} &euro;
+        {Number(cartProductPrice(product)).toFixed(3)} &euro;
       </div>
       {!!onRemove && (
         <div className="ml-2">

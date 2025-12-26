@@ -56,7 +56,7 @@ export default function MobileSidebar() {
                 </span>
               )}
             </Link>
-            <span className="text-lg">Zur Kasse ({totalCost} &euro;)</span>
+            <span className="text-lg">Zur Kasse ({Number(totalCost).toFixed(3)} &euro;)</span>
           </button>
         </div>
       )}

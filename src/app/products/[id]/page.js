@@ -116,7 +116,7 @@ export default function ProductPage() {
             {/* Display category name */}
             <div className="mb-4">
               <span className="text-2xl font-bold mr-2">
-                {totalPrice > 0 ? totalPrice : product.price}€
+                {totalPrice > 0 ? Number(totalPrice).toFixed(3) : Number(product.price).toFixed(3)}€
               </span>
               {product.price && (
                 <span className="text-gray-500 line-through">
