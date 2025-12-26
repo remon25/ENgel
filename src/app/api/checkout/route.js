@@ -5,6 +5,10 @@ import { DeliveryPrice } from "@/app/models/DeliverPrices";
 import validator from "validator";
 import sanitizeHtml from "sanitize-html";
 
+function roundToInteger(value) {
+  return Math.round(value * 100) / 100;
+}
+
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 export async function POST(req) {
@@ -142,7 +146,7 @@ export async function POST(req) {
         });
       }
 
-      let productTotal = menuItem.price * (product.quantity || 1);
+      let productTotal = roundToInteger(menuItem.price * (product.quantity || 1));
 
       if (product.size) {
         const selectedSize = menuItem.sizes.find(
@@ -163,7 +167,7 @@ export async function POST(req) {
           );
         }
 
-        productTotal += selectedSize.price * (product.quantity || 1);
+        productTotal += roundToInteger(selectedSize.price * (product.quantity || 1));
       }
 
       // if (product.extras && product.extras.length > 0) {
@@ -234,7 +238,7 @@ export async function POST(req) {
     const stripeLineItems = [];
 
     for (const product of cartProducts) {
-      let productTotal = product.price * (product.quantity || 1);
+      let productTotal = roundToInteger(product.price * (product.quantity || 1));
 
       if (product.size) {
         const selectedSize = product.sizes.find(
@@ -244,7 +248,7 @@ export async function POST(req) {
         );
 
         if (selectedSize) {
-          productTotal += selectedSize.price * (product.quantity || 1);
+          productTotal += roundToInteger(selectedSize.price * (product.quantity || 1));
         }
       }
 
@@ -267,7 +271,7 @@ export async function POST(req) {
         price_data: {
           currency: "EUR",
           product_data: { name: product.name },
-          unit_amount: productTotal * 100,
+          unit_amount: Math.round(productTotal * 100),
         },
       });
     }
