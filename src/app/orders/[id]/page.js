@@ -127,7 +127,7 @@ function OrderPage() {
             <div className="text-left py-2 text-gray-500">
               Zwischensumme:{" "}
               <span className="text-black font-bold inline-block w-8">
-                {order?.subtotal}€
+                {Number(order?.subtotal).toFixed(3)}€
               </span>
               <br />
               {order?.orderType === "delivery" ? "Lieferung: " : ""}
@@ -147,7 +147,7 @@ function OrderPage() {
               )}
               Gesamt:{" "}
               <span className="text-black font-bold inline-block w-8">
-                {order?.finalTotalPrice}€
+                {Number(order?.finalTotalPrice).toFixed(3)}€
               </span>
             </div>
           </div>

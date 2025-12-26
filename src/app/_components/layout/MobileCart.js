@@ -86,7 +86,7 @@ export default function MobileSidebar() {
                   ))}
                 <div className="py-1 flex justify-end items-center">
                   <div className="text-gray-500">Zwischensumme : &nbsp;</div>
-                  <div className="font-semibold">{totalCost} &euro;</div>
+                  <div className="font-semibold">{Number(totalCost).toFixed(3)} &euro;</div>
                 </div>
               </div>
               <Link href={"/cart"}>

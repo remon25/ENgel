@@ -165,7 +165,10 @@ export default function Sidebar() {
             <div className="flex flex-col items-start">
               <div className="py-1 flex justify-end items-center">
                 <div className="text-gray-500">Zwischensumme : &nbsp; </div>
-                <div className="font-semibold"> {totalCost} €</div>
+                <div className="font-semibold">
+                  {" "}
+                  {Number(totalCost).toFixed(3)} €
+                </div>
               </div>
               {myDeliveryPrice !== undefined && (
                 <>
@@ -183,7 +186,10 @@ export default function Sidebar() {
                     <div className="text-gray-500">Gesamt : &nbsp; </div>
                     {orderType == "delivery" && (
                       <div className="font-semibold">
-                        {totalCost + (freeDelivery ? 0 : myDeliveryPrice)} €
+                        {Number(
+                          totalCost + (freeDelivery ? 0 : myDeliveryPrice)
+                        ).toFixed(3)}{" "}
+                        €
                       </div>
                     )}
                   </div>

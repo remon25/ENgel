@@ -477,7 +477,7 @@ export default function CartPage() {
                   &nbsp;
                 </div>
                 <div className="font-semibold">
-                  {totalPrice} € <br />
+                  {Number(totalPrice).toFixed(3)} € <br />
                   {deliveryPrice === 0 ? (
                     "kostenlos"
                   ) : deliveryPrice == undefined ? (
@@ -488,7 +488,7 @@ export default function CartPage() {
                     deliveryPrice + " €"
                   )}
                   <br />
-                  {totalPrice + (deliveryPrice || 0)} €
+                  {Number(totalPrice + (deliveryPrice || 0)).toFixed(3)} €
                 </div>
               </div>
             </>
@@ -498,13 +498,13 @@ export default function CartPage() {
                 <div>
                   Zwischensumme:{" "}
                   <span className="font-semibold text-black">
-                    {totalPrice} €
+                    {Number(totalPrice).toFixed(3)} €
                   </span>
                 </div>
                 <div>
                   Gesamt :{" "}
                   <span className="font-semibold text-black">
-                    {totalPrice} €
+                    {Number(totalPrice).toFixed(3)} €
                   </span>
                 </div>
               </div>
